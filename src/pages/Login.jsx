@@ -57,7 +57,7 @@ export default function SignInSide() {
           localStorage.setItem("token", data.token);
           localStorage.setItem("user", JSON.stringify(data.user));
           window.setTimeout(function () {
-            window.location.href = "/register";
+            window.location.href = "/swnlist";
           }, 1500);
         } else if (data["status"] === "Invalid password") {
           Swal.fire({

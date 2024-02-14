@@ -4,17 +4,18 @@ import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import Appbar from "../assets/Appbar.jsx"
 
 export default function Page() {
   const [data, setData] = useState([]);
+  const { swn_id } = useParams();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:4000/swn'); // Adjust the endpoint based on your API
+        const response = await fetch(`http://localhost:4000/swn/${swn_id}`);
         if (response.ok) {
           const jsonData = await response.json();
           setData(jsonData);
@@ -27,7 +28,7 @@ export default function Page() {
     };
   
     fetchData();
-  }, []);
+  }, [swn_id]);
 
   return (
     <Appbar>
@@ -45,17 +46,17 @@ export default function Page() {
         <Grid item textAlign='center' sx={{ justifyContent: "center", display: 'flex' }} xs={12}>
           <Paper elevation={8} sx={{ width: 644, height: 75, background: "#C9A66D", borderRadius: '0px' }}>
             <Typography sx={{ fontSize: 20, textAlign: 'center', pt: 2.25 }}>
-              รายชื่อศูนย์วิทยบริการและชุมชนสัมพันธ์มหาวิทยาลัยสุโขทัยธรรมาธิราช
+              รายชื่อชมรมภายในศูนย์วิทยบริการและชุมชนสัมพันธ์
             </Typography>
           </Paper>
         </Grid>
 
         <Grid item textAlign='center' sx={{ pb: 15, justifyContent: "center", display: 'flex' }} xs={12}>
           <Paper elevation={8} sx={{ width: 644, height: 1, background: "#FFF6E1", borderRadius: '0px', display: 'block', pb: 0.5, pt: 0.5 }}>
-            {data.map(swn => (
-              <Button component={Link} to={`/swn/${swn.swn_id}`} sx={{ width: 644, height: 50, color: "#222831", fontSize: 20 }} key={swn.swn_id}>
+            {data.map(club => (
+              <Button sx={{ width: 644, height: 50, color: "#222831", fontSize: 20 }} key={club.club_id}>
                 <Typography sx={{ color: '#05383B', fontSize: 20 }}>
-                  {swn.swn_name}
+                  {club.club_name}
                 </Typography>
               </Button>
             ))}
