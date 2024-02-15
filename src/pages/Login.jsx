@@ -121,7 +121,7 @@ export default function SignInSide() {
             backgroundPosition: 'center',
           }}
         />
-        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square sx={{ border: 0, pt: 7 }}>
+        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square sx={{pt: 3 }}>
           <Box
             sx={{
               my: 8,
@@ -227,8 +227,17 @@ export default function SignInSide() {
                     </Typography>
                   </Grid>
                 </Grid>
-
-                <Box sx={{ border: 0, flexGrow: 1, justifyContent:'center',display:'flex' }}>
+                <Grid container sx={{display:'flex',justifyContent:'center'}}>
+                <Box sx={{justifyContent:'center',display:'flex',mr:10 }}>
+                    <Link
+                      href="/reset-password"
+                      fontSize="36"
+                      style={{ color: "#e05414" }}
+                    >
+                      ลืมรหัสผ่าน
+                    </Link>
+                </Box>
+                <Box sx={{ justifyContent:'center',display:'flex' }}>
                     <Link
                       href="/Register"
                       fontSize="36"
@@ -237,6 +246,7 @@ export default function SignInSide() {
                       ลงทะเบียน
                     </Link>
                 </Box>
+                </Grid>
               </Grid>
             </Box>
           </Box>
