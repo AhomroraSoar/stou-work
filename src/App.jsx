@@ -4,6 +4,7 @@ import Register from "./pages/Register";
 import Swnlist from "./pages/Swnlist";
 import Clublist from "./pages/Clublist";
 import ResetPassword from "./pages/ResetPassword";
+import Activity from "./pages/Activity";
 
 import "./css/App.css"
 
@@ -20,6 +21,7 @@ function App() {
       {/* private routes */}
       <Route path="/swnlist" element={<Swnlist />} />
       <Route path="/swn/:swn_id" element={<Clublist />} />
+      <Route path="/club/:club_id" element={<Activity />} />
       
       {/* catch all */}
       <Route path="*" element={<Missing />} />

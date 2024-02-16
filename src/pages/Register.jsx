@@ -31,6 +31,8 @@ export default function UserCreate() {
       user_age:parseInt(user_age),
       user_career:user_career,
       user_address:user_address,
+      department:department,
+      program:program,
       email: email,
       password: password,
       user_tel: user_tel,
@@ -53,7 +55,7 @@ export default function UserCreate() {
             timer: 2000,
             showConfirmButton: false,
           });
-          window.location.href = "/swnlist";
+          window.location.href = "/";
         } else if (result["status"] === "registered") {
           Swal.fire({
             icon: "error",
@@ -73,6 +75,8 @@ export default function UserCreate() {
   const [user_name, setUser_name] = useState("");
   const [user_age, setUser_age] = useState("");
   const [user_career, setUser_career] = useState("");
+  const [department, setDepartment] = useState("");
+  const [program, setProgram] = useState("");
   const [user_address, setUser_address] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -97,15 +101,13 @@ export default function UserCreate() {
     },
   });
 
-  const avatarStyle = { backgroundColor: "#041444" };
-
   return (
     <ThemeProvider theme={theme}>
       <Grid container component="main" sx={{minHeight:"100vh"}}>
         <CssBaseline />
         <Grid
           item
-          md={7}
+          md={6}
           sx={{
             backgroundImage:
               "url(https://cdn.discordapp.com/attachments/1193822007729602610/1194188498509504573/sign-in-background-draft3.png?ex=65af71b4&is=659cfcb4&hm=d08d945fb9182dd9150f378e4a2dc1b702558e083dbfbb5ab4eb50352fb820be&)",
@@ -122,7 +124,7 @@ export default function UserCreate() {
           item
           align="center"
           xs={12}
-          md={5}
+          md={6}
           component={Paper}
           elevation={6}
           square
@@ -133,7 +135,7 @@ export default function UserCreate() {
               flexDirection: "column",
               alignItems: "center",
               mt:2,
-              mb:2
+              mb:2,
             }}
           >
               <Typography component="h1" variant="h5" sx={{ mt: 1, mb: 1 }}>
@@ -171,23 +173,38 @@ export default function UserCreate() {
 
                 <Grid item xs={12} sx={{ mb: 2 }}>
                   <TextField
+                  sx={{mr:5.5}}
                     variant="outlined"
                     required
                     id="user_age"
                     label="อายุ"
-                    sx={{ width: 490 }}
+                    
                     onChange={(e) => setUser_age(e.target.value)}
                   />
-                </Grid>
-
-                <Grid item xs={12} sx={{ mb: 2 }}>
                   <TextField
                     variant="outlined"
                     required
                     id="user_career"
                     label="อาชีพ"
-                    sx={{ width: 490 }}
                     onChange={(e) => setUser_career(e.target.value)}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sx={{ mb: 2 }}>
+                  <TextField
+                  sx={{mr:5.5}}
+                    variant="outlined"
+                    required
+                    id="department"
+                    label="สาขาวิชา"
+                    onChange={(e) => setDepartment(e.target.value)}
+                  />
+                  <TextField
+                    variant="outlined"
+                    required
+                    id="program"
+                    label="หลักสูตร"
+                    onChange={(e) => setProgram(e.target.value)}
                   />
                 </Grid>
 
@@ -258,13 +275,10 @@ export default function UserCreate() {
                     type="submit"
                     variant="contained"
                     color="success"
-                    sx={{ width: 150, height: 40 }}
+                    sx={{ width: 150, height: 40,mr:8 }}
                   >
                     ยืนยัน
                   </Button>
-                </Grid>
-
-                <Grid item xs={12}>
                   <Button
                     variant="contained"
                     href="/"
