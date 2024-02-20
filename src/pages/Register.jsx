@@ -52,7 +52,7 @@ export default function UserCreate() {
             icon: "success",
             title: "สร้าง Account เสร็จสิ้น",
             text: result["message"],
-            timer: 2000,
+            timer: 4000,
             showConfirmButton: false,
           });
           window.location.href = "/";
