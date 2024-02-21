@@ -12,6 +12,7 @@ import Appbar from "../assets/Appbar.jsx"
 export default function Page() {
   const [data, setData] = useState([]);
   const { swn_id } = useParams();
+  const [clubmemberCounts, setClubmemberCounts] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,6 +31,30 @@ export default function Page() {
   
     fetchData();
   }, [swn_id]);
+
+  useEffect(() => {
+    const fetchClubmemberCounts = async () => {
+      const counts = {};
+      for (const club of data) {
+        try {
+          const response = await fetch(`http://localhost:4000/clubmember/${club.club_id}`);
+          if (response.ok) {
+            const jsonData = await response.json();
+            counts[club.club_id] = jsonData.length;
+          } else {
+            console.error(`Failed to fetch participants count for activity ${club.club_id}`);
+          }
+        } catch (error) {
+          console.error(`Error fetching participants count for activity ${club.club_id}:`, error);
+        }
+      }
+      setClubmemberCounts(counts);
+    };
+
+    if (data.length > 0) {
+      fetchClubmemberCounts();
+    }
+  }, [data]);
 
   return (
     <Appbar>
@@ -58,6 +83,8 @@ export default function Page() {
               <Button component={Link} to={`/club/${club.club_id}`} sx={{ width: 644, height: 50, color: "#222831", fontSize: 20 }} key={club.club_id}>
                 <Typography sx={{ color: '#05383B', fontSize: 20 }}>
                   {club.club_name}
+                  <span style={{ color: '#4341d1' }}> จำนวนผู้เข้าร่วม: </span>
+                  <span >{clubmemberCounts[club.club_id]} คน</span>
                 </Typography>
               </Button>
             ))}

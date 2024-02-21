@@ -12,6 +12,7 @@ import Appbar from "../assets/Appbar.jsx"
 export default function Page() {
   const [data, setData] = useState([]);
   const [teacherdata,setTeacherdata] = useState([]);
+  const [committeedata,setCommitteedata] = useState([]);
   const { club_id } = useParams();
   const [participantsCounts, setParticipantsCounts] = useState({});
 
@@ -76,6 +77,26 @@ export default function Page() {
     fetchTeacherData();
   }, [club_id]);
 
+  useEffect(() => {
+    const fetchCommitteeData = async () => {
+      try {
+        const response = await fetch(`http://localhost:4000/club/${club_id}/committee`);
+        if (response.ok) {
+          const jsonData = await response.json();
+          setCommitteedata(jsonData);
+        } else {
+          console.error('Failed to fetch teacher data');
+        }
+      } catch (error) {
+        console.error('Error fetching teacher data:', error);
+      }
+    };
+  
+    fetchCommitteeData();
+  }, [club_id]);
+
+  
+
   const formatDate = (dateTimeString) => {
     const date = new Date(dateTimeString);
     const day = date.getDate().toString().padStart(2, '0');
@@ -86,6 +107,42 @@ export default function Page() {
   
     return `${day}/${month}/${year} ${hours}:${minutes}`;
   };
+
+  const handleRegisterClick = async () => {
+    try {
+      const userData = JSON.parse(localStorage.getItem('user'));
+  
+      if (!userData || !userData.user_id) {
+        throw new Error('User data or user ID not found in local storage');
+      }
+  
+      const userId = userData.user_id;
+      console.log(JSON.stringify({userId}))
+  
+      const response = await fetch(`http://localhost:4000/club/${club_id}/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'user': JSON.stringify({ user_id: userId }),
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to register user to the club');
+      }
+      if (!response.error) {
+        throw new Error(message);
+      }
+  
+      const data = await response.json();
+      console.log(data); // Handle success response
+    } catch (error) {
+      console.error('Error registering user to the club:', error);
+      // Handle error
+    }
+  };
+  
+  
 
   return (
     <Appbar>
@@ -109,10 +166,10 @@ export default function Page() {
             </Grid>
           </Grid>
 
-          <Grid container xs={12} sx={{ display: 'flex', justifyContent: 'center',mt:5 }}>
+          <Grid container sx={{ display: 'flex', justifyContent: 'center',mt:5 }}>
 
             <Grid item>
-              <Button variant='contained' color='success' sx={{ width: 450, height: 100 }}>
+              <Button variant='contained' color='success' sx={{ width: 450, height: 100,fontSize: '30px',borderRadius:2 }} onClick={handleRegisterClick}>
                 สมัครสมาชิก
               </Button>
               
@@ -143,18 +200,36 @@ export default function Page() {
                 </Paper>
               </Grid>
               
-              <Grid item sx={{mt:2}}>              
-                  <Paper elevation={8} sx={{ width: 450, height: 75, background: "#C9A66D", borderRadius: '2px' }}>
-                    <Typography sx={{ fontSize: 20, textAlign: 'center', pt: 2.25 }}>
-                      รายชื่อคณะกรรมการ {data.length > 0 && `${data[0].club_name}`}
-                    </Typography>
-                  </Paper>
+              <Grid item sx={{ mt: 2 }}>
+                <Paper elevation={8} sx={{ width: 450, height: 75, background: "#C9A66D", borderRadius: '2px' }}>
+                  <Typography sx={{ fontSize: 20, textAlign: 'center', pt: 2.25 }}>
+                    รายชื่อคณะกรรมการ {data.length > 0 && `${data[0].club_name}`}
+                  </Typography>
+                </Paper>
 
-                  <Paper elevation={8} sx={{ width: 450, background: "#FFF6E1", borderRadius: '2px', pb: 0.5, pt: 0.5 }}>
-                  <Typography>
-                      test กรรมการ
-                    </Typography>
-                  </Paper>
+                <Paper elevation={8} sx={{ width: 450, background: "#FFF6E1", borderRadius: '2px', pb: 0.5, pt: 0.5, textAlign: 'center' }}>
+                  <Grid container spacing={1} >
+                    {committeedata.map(({committee_role_name,user_id,user_name}) => (
+                      <React.Fragment key={user_id}>
+                        <Grid item xs={4}  >
+                          <Typography sx={{ fontSize: 15, textAlign:'left',ml:2 }}>
+                            {committee_role_name}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={4}  >
+                          <Typography sx={{ fontSize: 16, textAlign:'center' }}>
+                            {user_id}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={4} >
+                          <Typography sx={{ fontSize: 16, textAlign:'left',ml:1 }}>
+                            {user_name}
+                          </Typography>
+                        </Grid>
+                      </React.Fragment>
+                    ))}
+                  </Grid>
+                </Paper>
               </Grid>
             </Grid>
 

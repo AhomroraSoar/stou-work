@@ -45,29 +45,32 @@ export default function UserCreate() {
       },
       body: JSON.stringify(data),
     })
-      .then((res) => res.json())
-      .then((result) => {
-        if (result["status"] === "ok") {
-          Swal.fire({
-            icon: "success",
-            title: "สร้าง Account เสร็จสิ้น",
-            text: result["message"],
-            timer: 4000,
-            showConfirmButton: false,
-          });
-          window.location.href = "/";
-        } else if (result["status"] === "registered") {
-          Swal.fire({
-            icon: "error",
-            title: "Email registered",
-            text: result["message"],
-            showConfirmButton: false,
-            position: "top-end",
-            toast: true,
-            timer: 2500,
-            timerProgressBar: true,
-          });
-        }
+    .then((res) => res.json())
+    .then((result) => {
+      if (result["status"] === "ok") {
+        Swal.fire({
+          icon: "success",
+          title: "สร้าง Account เสร็จสิ้น",
+          text: result["message"],
+          showConfirmButton: true, // Change to true to show the confirm button
+          timerProgressBar: false,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = "/"; // Redirect to "/" when confirm button is clicked
+          }
+        });
+      } else if (result["status"] === "registered") {
+        Swal.fire({
+          icon: "error",
+          title: "Email registered",
+          text: result["message"],
+          showConfirmButton: false,
+          position: "top-end",
+          toast: true,
+          timer: 2500,
+          timerProgressBar: true,
+        });
+      }
       });
   };
 
