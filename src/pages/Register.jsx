@@ -14,7 +14,6 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import Swal from "sweetalert2";
 
-import PersonAddAltOutlinedIcon from "@mui/icons-material/PersonAddAltOutlined";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
@@ -52,11 +51,11 @@ export default function UserCreate() {
           icon: "success",
           title: "สร้าง Account เสร็จสิ้น",
           text: result["message"],
-          showConfirmButton: true, // Change to true to show the confirm button
+          showConfirmButton: true, 
           timerProgressBar: false,
         }).then((result) => {
           if (result.isConfirmed) {
-            window.location.href = "/"; // Redirect to "/" when confirm button is clicked
+            window.location.href = "/";
           }
         });
       } else if (result["status"] === "registered") {

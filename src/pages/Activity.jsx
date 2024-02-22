@@ -7,6 +7,8 @@ import Button from '@mui/material/Button';
 import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
+import Swal from "sweetalert2";
+
 import Appbar from "../assets/Appbar.jsx"
 
 export default function Page() {
@@ -58,6 +60,7 @@ export default function Page() {
       fetchParticipantsCounts();
     }
   }, [data]);
+  console.log(data)
 
   useEffect(() => {
     const fetchTeacherData = async () => {
@@ -110,39 +113,60 @@ export default function Page() {
 
   const handleRegisterClick = async () => {
     try {
-      const userData = JSON.parse(localStorage.getItem('user'));
-  
-      if (!userData || !userData.user_id) {
-        throw new Error('User data or user ID not found in local storage');
-      }
-  
-      const userId = userData.user_id;
-      console.log(JSON.stringify({userId}))
-  
-      const response = await fetch(`http://localhost:4000/club/${club_id}/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'user': JSON.stringify({ user_id: userId }),
-        },
-      });
-  
-      if (!response.ok) {
-        throw new Error('Failed to register user to the club');
-      }
-      if (!response.error) {
-        throw new Error(message);
-      }
-  
-      const data = await response.json();
-      console.log(data); // Handle success response
+        const userData = JSON.parse(localStorage.getItem('user'));
+
+        if (!userData || !userData.user_id) {
+            throw new Error('User data or user ID not found in local storage');
+        }
+
+        const userId = userData.user_id;
+
+        const swalResult = await Swal.fire({
+            title: 'ยืนยัน',
+            text: `ยืนยันที่จะลงทะเบียนเข้าร่วม ${data.length > 0 ? data[0].club_name : ''}` ,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'ตกลง',
+            cancelButtonText: 'ยกเลิก',
+        });
+
+        if (swalResult.isConfirmed) {
+            const response = await fetch(`http://localhost:4000/club/${club_id}/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'user': JSON.stringify({ user_id: userId }),
+                },
+            });
+
+            const result = await response.json();
+
+            console.log('Result status:', result.status);
+
+            if (result.status === 'ok') {
+              console.log('Inside error block');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'ลงทะเบียนเรียบร้อย',
+                    text: result.message,
+                    showConfirmButton: false,
+                    timerProgressBar: false,
+                });
+            } else if (result.status === 'registered') {
+              console.log('Inside error block');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'ไม่สามารถลงทะเบียนได้',
+                    text: result.message,
+                    showConfirmButton: false,
+                    timerProgressBar: false,
+                });
+            }
+        }
     } catch (error) {
-      console.error('Error registering user to the club:', error);
-      // Handle error
+        console.error('Error registering user to the club:', error);
     }
-  };
-  
-  
+};
 
   return (
     <Appbar>
@@ -169,7 +193,14 @@ export default function Page() {
           <Grid container sx={{ display: 'flex', justifyContent: 'center',mt:5 }}>
 
             <Grid item>
-              <Button variant='contained' color='success' sx={{ width: 450, height: 100,fontSize: '30px',borderRadius:2 }} onClick={handleRegisterClick}>
+              <Button variant='contained' color='success' 
+              sx={{ width: 450, 
+                height: 100,
+                fontSize: '30px',
+                borderRadius:2 
+              }}
+              onClick={handleRegisterClick}
+              >
                 สมัครสมาชิก
               </Button>
               

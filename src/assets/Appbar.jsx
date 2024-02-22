@@ -12,6 +12,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { Link } from 'react-router-dom';
 
 import Swal from "sweetalert2";
 
@@ -145,6 +146,7 @@ export default function Layout({ children }) {
                   <Button
                     key={page}
                     onClick={handleCloseNavMenu}
+                    component={Link} to={'http://localhost:3000/teachersearch'}
                     sx={{ my: 2, color: '#004D1F', display: 'block' }}
                   >
                     {page}
