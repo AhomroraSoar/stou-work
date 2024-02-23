@@ -11,6 +11,8 @@ import Swal from "sweetalert2";
 
 import Appbar from "../assets/Appbar.jsx"
 
+import BigBackground from "../assets/img/BigBackground.png"
+
 export default function Page() {
   const [data, setData] = useState([]);
   const [teacherdata,setTeacherdata] = useState([]);
@@ -173,7 +175,7 @@ export default function Page() {
       <Box sx={{
         justifyContent: 'center',
         flexGrow: 1,
-        backgroundImage: 'url(https://cdn.discordapp.com/attachments/1193822007729602610/1193822181214408755/8.jpg?ex=65ae1c8c&is=659ba78c&hm=db294314a43f939a1d55fae2b42db61f4ba5f2faa4d6fe7ffd517e085f437550&)',
+        backgroundImage: `url(${BigBackground})`,
         backgroundRepeat: 'repeat',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -273,7 +275,7 @@ export default function Page() {
 
                 <Paper elevation={8} sx={{ width: '90%', background: "#FFF6E1", borderRadius: '2px', pb: 0.5, pt: 0.5,ml:5 }}>
                   {data.map(activity => (
-                    <Button component={Link} to={`/activity/${activity.activity_id}`} sx={{ width: "100%", color: "#222831", fontSize: 20 }} key={activity.activity_id}>
+                    <Button component={Link} to={`/club/${activity.club_id}/activity/${activity.activity_id}`} sx={{ width: "100%", color: "#222831", fontSize: 20 }} key={activity.activity_id}>
                       <Typography sx={{ fontSize: 20 }}>
                         <span style={{ color: '#4341d1' }}>ชื่อกิจกรรม </span>
                         {activity.activity_name}

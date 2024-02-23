@@ -9,6 +9,8 @@ import { useParams } from 'react-router-dom';
 
 import Appbar from "../assets/Appbar.jsx"
 
+import BigBackground from "../assets/img/BigBackground.png"
+
 export default function Page() {
   const [data, setData] = useState([]);
   const { swn_id } = useParams();
@@ -61,7 +63,7 @@ export default function Page() {
     <Box sx={{
       justifyContent: 'center',
       flexGrow: 1,
-      backgroundImage: 'url(https://cdn.discordapp.com/attachments/1193822007729602610/1193822181214408755/8.jpg?ex=65ae1c8c&is=659ba78c&hm=db294314a43f939a1d55fae2b42db61f4ba5f2faa4d6fe7ffd517e085f437550&)',
+      backgroundImage: `url(${BigBackground})`,
       backgroundRepeat: 'repeat',
       backgroundSize: 'cover',
       backgroundPosition: 'center',

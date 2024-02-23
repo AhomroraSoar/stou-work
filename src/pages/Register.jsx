@@ -17,6 +17,8 @@ import Swal from "sweetalert2";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
+import LoginBackground from "../assets/img/login-background.png"
+
 export default function UserCreate() {
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -111,8 +113,7 @@ export default function UserCreate() {
           item
           md={6}
           sx={{
-            backgroundImage:
-              "url(https://cdn.discordapp.com/attachments/1193822007729602610/1194188498509504573/sign-in-background-draft3.png?ex=65af71b4&is=659cfcb4&hm=d08d945fb9182dd9150f378e4a2dc1b702558e083dbfbb5ab4eb50352fb820be&)",
+            backgroundImage: `url(${LoginBackground})`,
             backgroundRepeat: "no-repeat",
             backgroundColor: (t) =>
               t.palette.mode === "light"
