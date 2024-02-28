@@ -54,7 +54,7 @@ export default function Page() {
         <Grid item textAlign='center' sx={{ pb: 15, justifyContent: "center", display: 'flex' }} xs={12}>
           <Paper elevation={8} sx={{ width: 644, height: 1, background: "#FFF6E1", borderRadius: '0px', display: 'block', pb: 0.5, pt: 0.5 }}>
             {data.map(swn => (
-              <Button component={Link} to={`/swn/${swn.swn_id}`} sx={{ width: 644, height: 50, color: "#222831", fontSize: 20 }} key={swn.swn_id}>
+              <Button component={Link} to={`/swn/${swn.swn_id}`} sx={{ width: 644, height: 50, color: "#222831", fontSize: 20,mt:0,mb:0.5 }} key={swn.swn_id}>
                 <Typography sx={{ color: '#05383B', fontSize: 20 }}>
                   {swn.swn_name}
                 </Typography>

@@ -16,6 +16,7 @@ import BigBackground from "../assets/img/BigBackground.png"
 
 export default function Page() {
   const [data, setData] = useState([]);
+  const [clubdata, setClubdata] = useState([]);
   const [teacherdata,setTeacherdata] = useState([]);
   const [committeedata,setCommitteedata] = useState([]);
   const { club_id } = useParams();
@@ -97,6 +98,24 @@ export default function Page() {
     };
   
     fetchCommitteeData();
+  }, [club_id]);
+
+  useEffect(() => {
+    const fetchClubdata = async () => {
+      try {
+        const response = await fetch(`http://localhost:4000/clubname/${club_id}`);
+        if (response.ok) {
+          const jsonData = await response.json();
+          setClubdata(jsonData);
+        } else {
+          console.error('Failed to fetch club data');
+        }
+      } catch (error) {
+        console.error('Error fetching club data:', error);
+      }
+    };
+  
+    fetchClubdata();
   }, [club_id]);
 
   
@@ -185,7 +204,7 @@ export default function Page() {
             <Grid item textAlign='center' sx={{ justifyContent: "center", display: 'flex', mt: 3 }} xs={12}>
               <Paper elevation={8} sx={{ background: "#C9A66D", borderRadius: '5px' }}>
                 <Typography sx={{ fontSize: 26, textAlign: 'center', pl: 10, pr: 10, pt: 1.5, pb: 1.5 }}>
-                  {data.length > 0 && `${data[0].club_name}`}
+                {clubdata && clubdata.club_name}
                 </Typography>
               </Paper>
             </Grid>
@@ -208,7 +227,7 @@ export default function Page() {
               <Grid item sx={{ mt: 2 }}>
                 <Paper elevation={8} sx={{ width: 450, height: 75, background: "#C9A66D", borderRadius: '2px' }}>
                   <Typography sx={{ fontSize: 20, textAlign: 'center', pt: 2.25 }}>
-                    รายชื่ออาจารย์ที่ปรึกษา {data.length > 0 && `${data[0].club_name}`}
+                    รายชื่ออาจารย์ที่ปรึกษา {clubdata && clubdata.club_name}
                   </Typography>
                 </Paper>
 
@@ -239,7 +258,7 @@ export default function Page() {
               <Grid item sx={{ mt: 2,mb:10 }}>
                 <Paper elevation={8} sx={{ width: 450, height: 75, background: "#C9A66D", borderRadius: '2px' }}>
                   <Typography sx={{ fontSize: 20, textAlign: 'center', pt: 2.25 }}>
-                    รายชื่อคณะกรรมการ {data.length > 0 && `${data[0].club_name}`}
+                    รายชื่อคณะกรรมการ {clubdata && clubdata.club_name}
                   </Typography>
                 </Paper>
 
@@ -273,7 +292,7 @@ export default function Page() {
             <Grid item xs={8} >              
                 <Paper elevation={8} sx={{ width: '90%', height: 75, background: "#C9A66D", borderRadius: '2px',ml:5 }}>
                   <Typography sx={{ fontSize: 20, textAlign: 'center', pt: 2.25 }}>
-                    รายชื่อกิจกรรมภายใน{data.length > 0 && `${data[0].club_name}`}
+                    รายชื่อกิจกรรมภายใน{clubdata && clubdata.club_name} 
                   </Typography>
                 </Paper>
 
