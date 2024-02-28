@@ -9,6 +9,8 @@ import Appbar from "../assets/Appbar.jsx"
 
 import BigBackground from "../assets/img/BigBackground.png"
 
+import "../css/Teachersearch.css"
+
 export default function Page() {
   const [teacher, setTeacher] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -68,26 +70,26 @@ export default function Page() {
       <Grid item xs={12} sx={{mb:5,mt:3,ml:7,width:'90%'}}>
         <TableContainer sx={{border:2}}>
           <Table>
-            <TableHead sx={{backgroundColor:'white',borderBottom:2}}>
+            <TableHead sx={{backgroundColor:'#003D98',borderBottom:2}}>
               <TableRow>
-                <TableCell sx={{ textAlign: 'center' }} >ชื่อ - นามสกุล</TableCell>
-                <TableCell sx={{ textAlign: 'center' }} >สาขาวิชา</TableCell>
-                <TableCell sx={{ textAlign: 'center' }} >เบอร์โทรศัพท์</TableCell>
-                <TableCell sx={{ textAlign: 'center' }} >Line ID</TableCell>
-                <TableCell sx={{ textAlign: 'center' }} > ประจำชมรม</TableCell>
+                <TableCell sx={{ textAlign: 'center', color:'#ffffff' }} >ชื่อ - นามสกุล</TableCell>
+                <TableCell sx={{ textAlign: 'center', color:'#ffffff' }} >สาขาวิชา</TableCell>
+                <TableCell sx={{ textAlign: 'center', color:'#ffffff' }} >เบอร์โทรศัพท์</TableCell>
+                <TableCell sx={{ textAlign: 'center', color:'#ffffff' }} >Line ID</TableCell>
+                <TableCell sx={{ textAlign: 'center', color:'#ffffff' }} > ที่ปรึกษา</TableCell>
               </TableRow>
             </TableHead>
-              <TableBody>
-               {filteredTeacher.slice(0,20).map(user => (
-                 <TableRow key={user.user_id}>
-                  <TableCell sx={{ textAlign: 'center' }} >{user.user_name}</TableCell>
-                  <TableCell sx={{ textAlign: 'center' }} >{user.department}</TableCell>
-                  <TableCell sx={{ textAlign: 'center' }} >{user.user_tel}</TableCell>
-                  <TableCell sx={{ textAlign: 'center' }} >{user.lineID}</TableCell>
-                  <TableCell sx={{ textAlign: 'center' }} >{user.club_name}</TableCell>
-                 </TableRow>
-                ))}
-              </TableBody>
+            <TableBody>
+              {filteredTeacher.slice(0,20).map((user, index) => (
+                <TableRow key={user.user_id} className={index % 2 === 0 ? 'even' : 'odd'}>
+                  <TableCell sx={{ textAlign: 'center' }}>{user.user_name}</TableCell>
+                  <TableCell sx={{ textAlign: 'center' }}>{user.department}</TableCell>
+                  <TableCell sx={{ textAlign: 'center' }}>{user.user_tel}</TableCell>
+                  <TableCell sx={{ textAlign: 'center' }}>{user.lineID}</TableCell>
+                  <TableCell sx={{ textAlign: 'center' }}>{user.club_name}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
           </Table>
         </TableContainer>
       </Grid>

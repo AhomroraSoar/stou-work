@@ -45,7 +45,7 @@ export default function Page() {
 
         <Grid item textAlign='center' sx={{ justifyContent: "center", display: 'flex',mt:5 }} xs={12}>
           <Paper elevation={8} sx={{ width: 644, height: 75, background: "#C9A66D", borderRadius: '0px' }}>
-            <Typography sx={{ fontSize: 20, textAlign: 'center', pt: 2.25 }}>
+            <Typography sx={{ fontSize: 20, textAlign: 'center', pt: 2.25,fontFamily:'THSarabunNew' }}>
               รายชื่อศูนย์วิทยบริการและชุมชนสัมพันธ์มหาวิทยาลัยสุโขทัยธรรมาธิราช
             </Typography>
           </Paper>

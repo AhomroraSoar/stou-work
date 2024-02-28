@@ -6,6 +6,7 @@ import Clublist from "./pages/Clublist";
 import ResetPassword from "./pages/ResetPassword";
 import Activity from "./pages/Activity";
 import TeacherSearch from "./pages/Teachersearch"
+import ActivityDetail from "./pages/ActivityDetail";
 
 import "./css/App.css"
 
@@ -23,6 +24,7 @@ function App() {
       <Route path="/swnlist" element={<Swnlist />} />
       <Route path="/swn/:swn_id" element={<Clublist />} />
       <Route path="/club/:club_id" element={<Activity />} />
+      <Route path="/activity/:activity_id" element={<ActivityDetail />} />
       <Route path="/teachersearch" element={<TeacherSearch />} />
       
       {/* catch all */}

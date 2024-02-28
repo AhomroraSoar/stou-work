@@ -4,9 +4,8 @@ import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import { useParams } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
+import { useParams } from 'react-router-dom';
 
 import Swal from "sweetalert2";
 
@@ -16,28 +15,27 @@ import BigBackground from "../assets/img/BigBackground.png"
 
 export default function Page() {
   const [data, setData] = useState([]);
-  const [teacherdata,setTeacherdata] = useState([]);
-  const [committeedata,setCommitteedata] = useState([]);
-  const { club_id } = useParams();
+  const [paticipantdata,setParticipantData] = useState([]);
+  const { activity_id } = useParams();
   const [participantsCounts, setParticipantsCounts] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://localhost:4000/club/${club_id}`);
+        const response = await fetch(`http://localhost:4000/activitydetail/${activity_id}`);
         if (response.ok) {
           const jsonData = await response.json();
           setData(jsonData);
         } else {
-          console.error('Failed to fetch club data');
+          console.error('Failed to fetch activity');
         }
       } catch (error) {
-        console.error('Error fetching club data:', error);
+        console.error('Error fetching activity:', error);
       }
     };
   
     fetchData();
-  }, [club_id]);
+  }, [activity_id]);
 
   useEffect(() => {
     const fetchParticipantsCounts = async () => {
@@ -64,41 +62,22 @@ export default function Page() {
   }, [data]);
 
   useEffect(() => {
-    const fetchTeacherData = async () => {
+    const fetchpaticipantdata = async () => {
       try {
-        const response = await fetch(`http://localhost:4000/club/${club_id}/teacher`);
+        const response = await fetch(`http://localhost:4000/activity/${activity_id}`);
         if (response.ok) {
           const jsonData = await response.json();
-          setTeacherdata(jsonData);
+          setParticipantData(jsonData);
         } else {
-          console.error('Failed to fetch teacher data');
+          console.error('Failed to fetch activity');
         }
       } catch (error) {
-        console.error('Error fetching teacher data:', error);
+        console.error('Error fetching activity:', error);
       }
     };
   
-    fetchTeacherData();
-  }, [club_id]);
-
-  useEffect(() => {
-    const fetchCommitteeData = async () => {
-      try {
-        const response = await fetch(`http://localhost:4000/club/${club_id}/committee`);
-        if (response.ok) {
-          const jsonData = await response.json();
-          setCommitteedata(jsonData);
-        } else {
-          console.error('Failed to fetch teacher data');
-        }
-      } catch (error) {
-        console.error('Error fetching teacher data:', error);
-      }
-    };
-  
-    fetchCommitteeData();
-  }, [club_id]);
-
+    fetchpaticipantdata();
+  }, [activity_id]);
   
 
   const formatDate = (dateTimeString) => {
@@ -124,7 +103,7 @@ export default function Page() {
 
         const swalResult = await Swal.fire({
             title: 'ยืนยัน',
-            text: `ยืนยันที่จะลงทะเบียนเข้าร่วม ${data.length > 0 ? data[0].club_name : ''}` ,
+            text: `ยืนยันที่จะลงทะเบียนเข้าร่วม ${data.length > 0 ? data[0].activity_name : ''}` ,
             icon: 'question',
             showCancelButton: true,
             confirmButtonText: 'ตกลง',
@@ -132,7 +111,7 @@ export default function Page() {
         });
 
         if (swalResult.isConfirmed) {
-            const response = await fetch(`http://localhost:4000/club/${club_id}/register`, {
+            const response = await fetch(`http://localhost:4000/activity/${activity_id}/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -185,7 +164,7 @@ export default function Page() {
             <Grid item textAlign='center' sx={{ justifyContent: "center", display: 'flex', mt: 3 }} xs={12}>
               <Paper elevation={8} sx={{ background: "#C9A66D", borderRadius: '5px' }}>
                 <Typography sx={{ fontSize: 26, textAlign: 'center', pl: 10, pr: 10, pt: 1.5, pb: 1.5 }}>
-                  {data.length > 0 && `${data[0].club_name}`}
+                  กิจกรรม {data.length > 0 && `${data[0].activity_name}`}
                 </Typography>
               </Paper>
             </Grid>
@@ -193,57 +172,69 @@ export default function Page() {
 
           <Grid container sx={{ display: 'flex', justifyContent: 'center',mt:5 }}>
 
-            <Grid item>
+            <Grid item xs={5} >
+              
+              <Grid item sx={{ ml:5}}>
+                <Paper elevation={8} sx={{ width: '90%', height: 75, background: "#C9A66D", borderRadius: '2px', pb: 0.5, pt: 0.5 }}>
+                  <Typography sx={{ fontSize: 20, textAlign: 'center', pt: 2.25 }}>
+                    รายระเอียดกิจกรรม
+                  </Typography>
+                </Paper>
+
+                <Paper elevation={8} sx={{ width: '90%', background: "#FFF6E1", borderRadius: '2px', pb: 0.5, pt: 0.5}}>
+                  {data.map(activity => (
+                      <Typography sx={{ fontSize: 20,ml:6,pt:1.5,pb:1.5 }} key={activity.activity_id}>
+                        <span style={{ color: '#4341d1' }}>ชื่อกิจกรรม </span>
+                        {activity.activity_name}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span style={{ color: '#4341d1' }}>จำนวนผู้เข้าร่วม </span>
+                        {participantsCounts[activity_id]}&nbsp;
+                        <span style={{ color: '#4341d1' }}>คน </span>
+                        <br />
+                        <span style={{ color: '#4341d1' }}>ลักษณะกิจกรรม: </span>
+                        {activity.activity_type_name}
+                        <br />
+                        <span style={{ color: '#4341d1' }}>สถานที่: </span>
+                        {activity.location}&nbsp;
+                        <span style={{ color: '#4341d1' }}>จังหวัด: </span>
+                        {activity.province}
+                        <br/>
+                        <span style={{ color: '#4341d1' }}>Facebook: </span>
+                        {activity.facebook_contact}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span style={{ color: '#4341d1' }}>Line: </span>
+                        {activity.line_contact}
+                        <br/>
+                        <span style={{ color: 'green' }}> เริ่ม: </span>
+                        {formatDate(activity.start_date)}
+                        <span style={{ color: 'red' }}> สิ้นสุด: </span>
+                        {formatDate(activity.finish_date)}
+                      </Typography>
+                  ))}
+                </Paper>
+              </Grid>
+
               <Button variant='contained' color='success' 
-              sx={{ width: 450, 
+              sx={{ width: '84.5%', 
                 height: 100,
                 fontSize: '30px',
-                borderRadius:2 
+                borderRadius:2 ,
+                mt:2,
+                ml:5
               }}
               onClick={handleRegisterClick}
               >
-                สมัครสมาชิก
+                สมัครเข้าร่วมกิจกรรม
               </Button>
               
-              <Grid item sx={{ mt: 2 }}>
-                <Paper elevation={8} sx={{ width: 450, height: 75, background: "#C9A66D", borderRadius: '2px' }}>
+            </Grid>
+
+            <Grid item xs={7} >              
+                <Paper elevation={8} sx={{ width: '90%', height: 75, background: "#C9A66D", borderRadius: '2px',ml:5 }}>
                   <Typography sx={{ fontSize: 20, textAlign: 'center', pt: 2.25 }}>
-                    รายชื่ออาจารย์ที่ปรึกษา {data.length > 0 && `${data[0].club_name}`}
+                    รายชื่อผู้เข้าร่วมกิจกรรม{data.length > 0 && `${data[0].activity_name}`}
                   </Typography>
                 </Paper>
 
-                <Paper elevation={8} sx={{ width: 450, background: "#FFF6E1", borderRadius: '2px', textAlign: 'center' }}>
-                  <Grid item xs={12} sx={{width:'100%'}}>
-                    <TableContainer>
-                    <Table>
-                        <TableHead sx={{backgroundColor:'#003D98',borderBottom:2}}>
-                        <TableRow>
-                            <TableCell sx={{ textAlign: 'center', color:'#ffffff' }} >รหัสประจำตัว</TableCell>
-                            <TableCell sx={{ textAlign: 'center', color:'#ffffff' }} >ชื่อ - นามสกุล</TableCell>
-                        </TableRow>
-                        </TableHead>
-                        <TableBody>
-                        {teacherdata.map((user) => (
-                            <TableRow key={user.user_id}>
-                            <TableCell sx={{ textAlign: 'center' }}>{user.user_id}</TableCell>
-                            <TableCell sx={{ textAlign: 'center' }}>{user.user_name}</TableCell>
-                            </TableRow>
-                        ))}
-                        </TableBody>
-                    </Table>
-                    </TableContainer>
-                </Grid>
-                </Paper>
-              </Grid>
-              
-              <Grid item sx={{ mt: 2,mb:10 }}>
-                <Paper elevation={8} sx={{ width: 450, height: 75, background: "#C9A66D", borderRadius: '2px' }}>
-                  <Typography sx={{ fontSize: 20, textAlign: 'center', pt: 2.25 }}>
-                    รายชื่อคณะกรรมการ {data.length > 0 && `${data[0].club_name}`}
-                  </Typography>
-                </Paper>
-
-                <Paper elevation={8} sx={{ width: 450, background: "#FFF6E1", borderRadius: '2px', textAlign: 'center' }}>
+                <Paper elevation={8} sx={{ width: '90%', background: "#FFF6E1", borderRadius: '2px', pb: 0.5,ml:5 }}>
                 <Grid item xs={12} sx={{width:'100%'}}>
                     <TableContainer>
                     <Table>
@@ -251,48 +242,19 @@ export default function Page() {
                         <TableRow>
                             <TableCell sx={{ textAlign: 'center', color:'#ffffff' }} >รหัสประจำตัว</TableCell>
                             <TableCell sx={{ textAlign: 'center', color:'#ffffff' }} >ชื่อ - นามสกุล</TableCell>
-                            <TableCell sx={{ textAlign: 'center', color:'#ffffff' }} >ตำแหน่ง</TableCell>
                         </TableRow>
                         </TableHead>
                         <TableBody>
-                        {committeedata.map((user) => (
-                            <TableRow key={user.user_id}>
+                        {paticipantdata.slice(0,10).map((user, index) => (
+                            <TableRow key={user.user_id} className={index % 2 === 0 ? 'even' : 'odd'}>
                             <TableCell sx={{ textAlign: 'center' }}>{user.user_id}</TableCell>
                             <TableCell sx={{ textAlign: 'center' }}>{user.user_name}</TableCell>
-                            <TableCell sx={{ textAlign: 'center' }}>{user.committee_role_name}</TableCell>
                             </TableRow>
                         ))}
                         </TableBody>
                     </Table>
                     </TableContainer>
                 </Grid>
-                </Paper>
-              </Grid>
-            </Grid>
-
-            <Grid item xs={8} >              
-                <Paper elevation={8} sx={{ width: '90%', height: 75, background: "#C9A66D", borderRadius: '2px',ml:5 }}>
-                  <Typography sx={{ fontSize: 20, textAlign: 'center', pt: 2.25 }}>
-                    รายชื่อกิจกรรมภายใน{data.length > 0 && `${data[0].club_name}`}
-                  </Typography>
-                </Paper>
-
-                <Paper elevation={8} sx={{ width: '90%', background: "#FFF6E1", borderRadius: '2px', pb: 0.5, pt: 0.5,ml:5 }}>
-                  {data.map(activity => (
-                    <Button component={Link} to={`/activity/${activity.activity_id}`} sx={{ width: "100%", color: "#222831", fontSize: 20,pb:1.5,pt:1.5 }} key={activity.activity_id}>
-                      <Typography sx={{ fontSize: 20 }}>
-                        <span style={{ color: '#4341d1' }}>ชื่อกิจกรรม </span>
-                        {activity.activity_name}
-                        <span style={{ color: '#4341d1' }}> จำนวนผู้เข้าร่วม: </span>
-                        <span >{participantsCounts[activity.activity_id]} คน</span>
-                        <br />
-                        <span style={{ color: 'green' }}> เริ่ม: </span>
-                        {formatDate(activity.start_date)}
-                        <span style={{ color: 'red' }}> สิ้นสุด: </span>
-                        {formatDate(activity.finish_date)}
-                      </Typography>
-                    </Button>
-                  ))}
                 </Paper>
             </Grid>
           </Grid>

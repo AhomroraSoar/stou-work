@@ -16,7 +16,7 @@ import { Link } from 'react-router-dom';
 
 import Swal from "sweetalert2";
 
-const pages = ['ค้าหารายชื่ออาจารย์ที่ปรึกษา'];
+const pages = ['ค้นหารายชื่ออาจารย์ที่ปรึกษา'];
 
 export default function Layout({ children }) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -33,8 +33,6 @@ export default function Layout({ children }) {
       icon: "success",
       title: "Logout!",
       text: "logged out successfully",
-      // toast: true,
-      // position: "top-end",
       showConfirmButton: false,
       timer: 1500,
       timerProgressBar: true,
@@ -75,7 +73,7 @@ export default function Layout({ children }) {
                 sx={{
                   mr: 2,
                   display: { xs: 'none', md: 'flex' },
-                  fontFamily: 'monospace',
+                  fontFamily: 'THsarabun',
                   fontWeight: 700,
                   color: '#004D1F',
                   textDecoration: 'none',
@@ -133,7 +131,7 @@ export default function Layout({ children }) {
                   mr: 2,
                   display: { xs: 'flex', md: 'none' },
                   flexGrow: 1,
-                  fontFamily: 'monospace',
+                  fontFamily:'THSarabunNew',
                   fontWeight: 700,
                   color: '#004D1F',
                   textDecoration: 'none',
