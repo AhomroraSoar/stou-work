@@ -13,6 +13,7 @@ import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { Link } from 'react-router-dom';
+import Logo from '../assets/img/logo-th.png'
 
 import Swal from "sweetalert2";
 
@@ -65,22 +66,23 @@ export default function Layout({ children }) {
         <AppBar position="static" sx={{ bgcolor: '#C9A66D' }}>
           <Container maxWidth="xl">
             <Toolbar disableGutters>
+            <a href="http://localhost:3000/swnlist" style={{ textDecoration: 'none',display:'flex', justifyContent:'center', alignContent:'center',alignItems:'center' }}>
+              <img src={Logo} style={{ width: 50, marginRight: 2 }} />
               <Typography
                 variant="h6"
                 noWrap
-                component="a"
-                href="http://localhost:3000/swnlist"
+                component="span"
                 sx={{
                   mr: 2,
-                  display: { xs: 'none', md: 'flex' },
                   fontFamily: 'THsarabun',
                   fontWeight: 700,
                   color: '#004D1F',
-                  textDecoration: 'none',
                 }}
               >
                 ระบบกิจการนักศึกษา
               </Typography>
+            </a>
+
 
               <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                 <IconButton

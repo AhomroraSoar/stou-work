@@ -88,6 +88,12 @@ export default function UserCreate() {
     password: '',
     showPassword: false,
   });
+  const [errors, setErrors] = useState({
+    user_id: false,
+    email: false,
+    password: false,
+    user_tel: false,
+  });
 
   const handleClickShowPassword = () => {
     setValues({ ...values, showPassword: !values.showPassword });
@@ -97,17 +103,24 @@ export default function UserCreate() {
     event.preventDefault();
   };
 
-  const handleChange = (event, setState, minLength, maxLength) => {
+  const handleChange = (event, setState, minLength, maxLength, errorType) => {
     const inputValue = event.target.value;
-    const numericValue = inputValue.replace(/\D/g, ''); // Remove non-numeric characters
+    const numericValue = inputValue.replace(/\D/g, ''); 
     if (/^\d*$/.test(inputValue) && numericValue.length >= minLength && numericValue.length <= maxLength) {
       setState(inputValue);
-      setValues({ ...values, password: inputValue }); // Update password in values object
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [errorType]: false,
+      }));
+    } else {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [errorType]: true,
+      }));
     }
   };
 
   const validateEmail = (email) => {
-    // Regular expression for email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
@@ -115,7 +128,21 @@ export default function UserCreate() {
   const handleChangePassword = (event) => {
     const inputValue = event.target.value;
     setPassword(inputValue);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      password: inputValue.length > 0 && (inputValue.length < 8),
+    }));
   };
+
+  const hasErrors =
+  Object.values(errors).some((error) => error) || // Check if any field has errors
+  email.trim() !== "" && !validateEmail(email) || 
+  password.length > 0 && (password.length < 8 ) ||
+  user_id.length !== 13 ||
+  user_tel.length !== 10 ||
+  [user_id, user_name, user_age, user_career, department, program, user_address, email, password, user_tel].some(field => field.trim() === "");
+
+
 
   const theme = createTheme({
     palette: {
@@ -270,7 +297,6 @@ export default function UserCreate() {
                     onBlur={() => {
                       if (email.trim() !== "" && !validateEmail(email)) {
                         // If the email is not empty and is invalid, reset the email state
-                        setEmail("");
                       }
                     }}
                     error={email.trim() !== "" && !validateEmail(email)}
@@ -292,16 +318,10 @@ export default function UserCreate() {
                   value={password} // Use password state directly
                   sx={{ width: 490 }}
                   onChange={handleChangePassword} // Use the new handleChangePassword function
-                  error={
-                    password.length > 0 &&
-                    (password.length < 8 || password.length > 25)
-                  }
-                  helperText={
-                    password.length > 0 &&
-                    (password.length < 8 || password.length > 25)
-                      ? `Password must be between 8 and 25 characters`
-                      : ""
-                  }
+                  error={errors.password}
+                  helperText={errors.password
+                    ? `Password must be more than 8 characters`
+                    : ""}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
@@ -352,6 +372,7 @@ export default function UserCreate() {
                     variant="contained"
                     color="success"
                     sx={{ width: 150, height: 40, mr: 8 }}
+                    disabled={hasErrors}
                   >
                     ยืนยัน
                   </Button>
