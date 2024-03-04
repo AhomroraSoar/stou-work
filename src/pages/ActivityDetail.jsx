@@ -199,7 +199,7 @@ export default function Page() {
                         {activity.province}
                         <br/>
                         <span style={{ color: '#4341d1' }}>Facebook: </span>
-                        {activity.facebook_contact}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        {activity.facebook_contact}<br/>
                         <span style={{ color: '#4341d1' }}>Line: </span>
                         {activity.line_contact}
                         <br/>

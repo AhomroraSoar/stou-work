@@ -226,8 +226,9 @@ export default function Page() {
               
               <Grid item sx={{ mt: 2 }}>
                 <Paper elevation={8} sx={{ width: 450, height: 75, background: "#C9A66D", borderRadius: '2px' }}>
-                  <Typography sx={{ fontSize: 20, textAlign: 'center', pt: 2.25 }}>
-                    รายชื่ออาจารย์ที่ปรึกษา {clubdata && clubdata.club_name}
+                  <Typography sx={{ fontSize: 18, textAlign: 'center',pt:1.5 }}>
+                    รายชื่ออาจารย์ที่ปรึกษา <br/>
+                    {clubdata && clubdata.club_name}
                   </Typography>
                 </Paper>
 
@@ -257,8 +258,9 @@ export default function Page() {
               
               <Grid item sx={{ mt: 2,mb:10 }}>
                 <Paper elevation={8} sx={{ width: 450, height: 75, background: "#C9A66D", borderRadius: '2px' }}>
-                  <Typography sx={{ fontSize: 20, textAlign: 'center', pt: 2.25 }}>
-                    รายชื่อคณะกรรมการ {clubdata && clubdata.club_name}
+                  <Typography sx={{ fontSize: 18, textAlign: 'center', pt: 1 }}>
+                    รายชื่อคณะกรรมการ <br/>
+                     {clubdata && clubdata.club_name}
                   </Typography>
                 </Paper>
 

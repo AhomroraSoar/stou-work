@@ -37,6 +37,7 @@ export default function UserCreate() {
       password: password,
       user_tel: user_tel,
     };
+    
     fetch("http://localhost:4000/register", {
       method: "POST",
       headers: {

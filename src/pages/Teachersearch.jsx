@@ -11,14 +11,21 @@ import BigBackground from "../assets/img/BigBackground.png"
 
 import "../css/Teachersearch.css"
 
-export default function Page() {
+export default function Teachersearch() {
   const [teacher, setTeacher] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetch('http://localhost:4000/teacherlist')
       .then(response => response.json())
-      .then(data => setTeacher(data))
+      .then(data => {
+        if (Array.isArray(data)) {
+          setTeacher(data);
+        } else {
+          console.error("Teacher data is not an array");
+          // Handle the situation when teacher is not an array
+        }
+      })
       .catch(error => console.error('Error fetching data:', error));
   }, []);
   
@@ -26,9 +33,10 @@ export default function Page() {
     setSearchTerm(event.target.value);
   };
 
-  const filteredTeacher = teacher.filter(teacher =>
+  // Check if teacher is an array before filtering
+  const filteredTeacher = Array.isArray(teacher) ? teacher.filter(teacher =>
     teacher.user_name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  ) : [];
 
   return (
     <Appbar>
@@ -80,15 +88,16 @@ export default function Page() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredTeacher.slice(0,20).map((user, index) => (
+              {filteredTeacher.slice(0, 20).map((user, index) => (
                 <TableRow key={user.user_id} className={index % 2 === 0 ? 'even' : 'odd'}>
-                  <TableCell sx={{ textAlign: 'center' }}>{user.user_name}</TableCell>
-                  <TableCell sx={{ textAlign: 'center' }}>{user.department}</TableCell>
-                  <TableCell sx={{ textAlign: 'center' }}>{user.user_tel}</TableCell>
-                  <TableCell sx={{ textAlign: 'center' }}>{user.lineID}</TableCell>
-                  <TableCell sx={{ textAlign: 'center' }}>{user.club_name}</TableCell>
+                  <TableCell sx={{ textAlign: 'center' }}>{user.user_name || ''}</TableCell>
+                  <TableCell sx={{ textAlign: 'center' }}>{user.department || ''}</TableCell>
+                  <TableCell sx={{ textAlign: 'center' }}>{user.user_tel || ''}</TableCell>
+                  <TableCell sx={{ textAlign: 'center' }}>{user.lineID || ''}</TableCell>
+                  <TableCell sx={{ textAlign: 'center' }}>{user.club_name || ''}</TableCell>
                 </TableRow>
-              ))}
+                ))
+              }
             </TableBody>
           </Table>
         </TableContainer>

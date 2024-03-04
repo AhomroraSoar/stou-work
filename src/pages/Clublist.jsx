@@ -82,11 +82,13 @@ export default function Page() {
         <Grid item textAlign='center' sx={{  justifyContent: "center", display: 'flex' }} xs={12}>
           <Paper elevation={8} sx={{ width: 644, height: 1, background: "#FFF6E1", borderRadius: '0px', display: 'block', pb: 0.5, pt: 0.5 }}>
             {data.map(club => (
-              <Button component={Link} to={`/club/${club.club_id}`} sx={{ width: 644, height: 50, color: "#222831", fontSize: 20 }} key={club.club_id}>
+              <Button component={Link} to={`/club/${club.club_id}`} sx={{ width: 644, height: 50, color: "#222831", fontSize: 20,mt:1,mb:1 }} key={club.club_id}>
                 <Typography sx={{ color: '#05383B', fontSize: 20 }}>
                   {club.club_name}
-                  <span style={{ color: '#4341d1' }}> จำนวนผู้เข้าร่วม: </span>
-                  <span >{clubmemberCounts[club.club_id]} คน</span>
+                  <div style={{ display: 'block' }}>
+                    <span style={{ color: '#4341d1' }}>จำนวนสมาชิก: </span>
+                    <span>{clubmemberCounts[club.club_id]} คน</span>
+                  </div>
                 </Typography>
               </Button>
             ))}
