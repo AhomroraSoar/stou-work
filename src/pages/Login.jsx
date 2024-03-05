@@ -106,7 +106,6 @@ export default function SignInSide() {
     setValues({ ...values, [prop]: event.target.value });
   };
   
-
   return (
     <ThemeProvider theme={defaultTheme}>
       <Grid container component="main" sx={{ height: '100vh', display: 'flex', justifyContent: 'center' }}>
