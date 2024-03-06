@@ -9,17 +9,20 @@ import { Link } from 'react-router-dom';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
 
 import Swal from "sweetalert2";
+import withReactContent from 'sweetalert2-react-content'
 
 import Appbar from "../assets/Appbar.jsx"
 
 import BigBackground from "../assets/img/BigBackground.png"
+
+import AddRoundedIcon from '@mui/icons-material/AddRounded';
 
 export default function Page() {
   const [data, setData] = useState([]);
   const [clubdata, setClubdata] = useState([]);
   const [teacherdata,setTeacherdata] = useState([]);
   const [committeedata,setCommitteedata] = useState([]);
-  const { club_id } = useParams();
+  const {  club_id } = useParams();
   const [participantsCounts, setParticipantsCounts] = useState({});
 
   useEffect(() => {
@@ -188,6 +191,162 @@ export default function Page() {
     }
 };
 
+const role = JSON.parse(localStorage.getItem("user"));
+
+if (role.role_id === 3) {
+  return (
+    <Appbar>
+      <Box sx={{
+        justifyContent: 'center',
+        flexGrow: 1,
+        backgroundImage: `url(${BigBackground})`,
+        backgroundRepeat: 'repeat',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        minHeight: '92.8vh',
+      }}>
+        <Grid container >
+          <Grid item xs={12}>
+            <Grid item textAlign='center' sx={{ justifyContent: "center", display: 'flex', mt: 3 }} xs={12}>
+              <Paper elevation={8} sx={{ background: "#C9A66D", borderRadius: '5px' }}>
+                <Typography sx={{ fontSize: 26, textAlign: 'center', pl: 10, pr: 10, pt: 1.5, pb: 1.5 }}>
+                {clubdata && clubdata.club_name}
+                </Typography>
+              </Paper>
+            </Grid>
+          </Grid>
+
+          <Grid container sx={{ display: 'flex', justifyContent: 'center',mt:5 }}>
+
+            <Grid item>
+              <Button variant='contained' color='success' 
+              sx={{ width: 450, 
+                height: 100,
+                fontSize: '30px',
+                borderRadius:2 
+              }}
+              onClick={handleRegisterClick}
+              >
+                สมัครสมาชิก
+              </Button>
+              
+              <Grid item sx={{ mt: 2 }}>
+                <Paper elevation={8} sx={{ width: 450, height: 75, background: "#C9A66D", borderRadius: '2px' }}>
+                  <Typography sx={{ fontSize: 18, textAlign: 'center',pt:1.5 }}>
+                    รายชื่ออาจารย์ที่ปรึกษา <br/>
+                    {clubdata && clubdata.club_name}
+                  </Typography>
+                </Paper>
+
+                <Paper elevation={8} sx={{ width: 450, background: "#FFF6E1", borderRadius: '2px', textAlign: 'center' }}>
+                  <Grid item xs={12} sx={{width:'100%'}}>
+                    <TableContainer>
+                    <Table>
+                        <TableHead sx={{backgroundColor:'#003D98',borderBottom:2}}>
+                        <TableRow>
+                            <TableCell sx={{ textAlign: 'center', color:'#ffffff' }} >รหัสประจำตัว</TableCell>
+                            <TableCell sx={{ textAlign: 'center', color:'#ffffff' }} >ชื่อ - นามสกุล</TableCell>
+                        </TableRow>
+                        </TableHead>
+                        <TableBody>
+                        {teacherdata.map((user) => (
+                            <TableRow key={user.user_id}>
+                            <TableCell sx={{ textAlign: 'center' }}>{user.user_id}</TableCell>
+                            <TableCell sx={{ textAlign: 'center' }}>{user.user_name}</TableCell>
+                            </TableRow>
+                        ))}
+                        </TableBody>
+                    </Table>
+                    <Button sx={{width:"100%",pt:1,pb:1}} >
+                      <AddRoundedIcon style={{ color:'black' }} />
+                      <Typography sx={{ color: '#05383B', fontSize: 16 }}>
+                        เพิ่มอาจารย์ที่ปรึกษา
+                      </Typography>
+                    </Button>
+                    </TableContainer>
+                </Grid>
+                </Paper>
+              </Grid>
+              
+              <Grid item sx={{ mt: 2,mb:10 }}>
+                <Paper elevation={8} sx={{ width: 450, height: 75, background: "#C9A66D", borderRadius: '2px' }}>
+                  <Typography sx={{ fontSize: 18, textAlign: 'center', pt: 1 }}>
+                    รายชื่อคณะกรรมการ <br/>
+                     {clubdata && clubdata.club_name}
+                  </Typography>
+                </Paper>
+
+                <Paper elevation={8} sx={{ width: 450, background: "#FFF6E1", borderRadius: '2px', textAlign: 'center' }}>
+                <Grid item xs={12} sx={{width:'100%'}}>
+                    <TableContainer>
+                    <Table>
+                        <TableHead sx={{backgroundColor:'#003D98',borderBottom:2}}>
+                        <TableRow>
+                            <TableCell sx={{ textAlign: 'center', color:'#ffffff' }} >รหัสประจำตัว</TableCell>
+                            <TableCell sx={{ textAlign: 'center', color:'#ffffff' }} >ชื่อ - นามสกุล</TableCell>
+                            <TableCell sx={{ textAlign: 'center', color:'#ffffff' }} >ตำแหน่ง</TableCell>
+                        </TableRow>
+                        </TableHead>
+                        <TableBody>
+                        {committeedata.map((user) => (
+                            <TableRow key={user.user_id}>
+                            <TableCell sx={{ textAlign: 'center' }}>{user.user_id}</TableCell>
+                            <TableCell sx={{ textAlign: 'center' }}>{user.user_name}</TableCell>
+                            <TableCell sx={{ textAlign: 'center' }}>{user.committee_role_name}</TableCell>
+                            </TableRow>
+                        ))}
+                        </TableBody>
+                    </Table>
+                      <Button sx={{width:"100%",pt:1,pb:1}} >
+                        <AddRoundedIcon style={{ color:'black' }} />
+                        <Typography sx={{ color: '#05383B', fontSize: 16 }}>
+                          เพิ่มคณะกรรมการ
+                        </Typography>
+                      </Button>
+                    </TableContainer>
+                </Grid>
+                </Paper>
+              </Grid>
+            </Grid>
+
+            <Grid item xs={8} >              
+                <Paper elevation={8} sx={{ width: '90%', height: 75, background: "#C9A66D", borderRadius: '2px',ml:5 }}>
+                  <Typography sx={{ fontSize: 20, textAlign: 'center', pt: 2.25 }}>
+                    รายชื่อกิจกรรมภายใน{clubdata && clubdata.club_name} 
+                  </Typography>
+                </Paper>
+
+                <Paper elevation={8} sx={{ width: '90%', background: "#FFF6E1", borderRadius: '2px', pb: 0.5, pt: 0.5,ml:5 }}>
+                  {data.map(activity => (
+                    <Button component={Link} to={`/activity/${activity.activity_id}`} sx={{ width: "100%", color: "#222831", fontSize: 20,pb:1.5,pt:1.5 }} key={activity.activity_id}>
+                      <Typography sx={{ fontSize: 20 }}>
+                        <span style={{ color: '#4341d1' }}>ชื่อกิจกรรม </span>
+                        {activity.activity_name}
+                        <span style={{ color: '#4341d1' }}> จำนวนผู้เข้าร่วม: </span>
+                        <span >{participantsCounts[activity.activity_id]} คน</span>
+                        <br />
+                        <span style={{ color: 'green' }}> เริ่ม: </span>
+                        {formatDate(activity.start_date)}
+                        <span style={{ color: 'red' }}> สิ้นสุด: </span>
+                        {formatDate(activity.finish_date)}
+                      </Typography>
+                    </Button>
+                  ))}
+                    <Button component={Link} to={`/createActivity/${club_id}`} sx={{width:"100%",pt:1,pb:1}} >
+                      <AddRoundedIcon style={{ color:'black' }} />
+                      <Typography sx={{ color: '#05383B', fontSize: 16 }}>
+                        เพิ่มกิจกรรม
+                      </Typography>
+                    </Button>
+                </Paper>
+            </Grid>
+          </Grid>
+
+        </Grid>
+      </Box>
+    </Appbar>
+  );
+} else {
   return (
     <Appbar>
       <Box sx={{
@@ -322,4 +481,5 @@ export default function Page() {
       </Box>
     </Appbar>
   );
+  }
 }

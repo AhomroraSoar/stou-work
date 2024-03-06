@@ -7,6 +7,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Activity from "./pages/Activity";
 import TeacherSearch from "./pages/Teachersearch"
 import ActivityDetail from "./pages/ActivityDetail";
+import ActivityCreate from "./pages/ActivityCreate"
 
 import "./css/App.css"
 
@@ -26,6 +27,9 @@ function App() {
       <Route path="/club/:club_id" element={<Activity />} />
       <Route path="/activity/:activity_id" element={<ActivityDetail />} />
       <Route path="/teachersearch" element={<TeacherSearch />} />
+
+      {/* admin routes */}
+      <Route path="/createActivity/:club_id" element={<ActivityCreate />} />
       
       {/* catch all */}
       <Route path="*" element={<Missing />} />
