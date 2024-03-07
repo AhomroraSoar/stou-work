@@ -7,7 +7,8 @@ import ResetPassword from "./pages/ResetPassword";
 import Activity from "./pages/Activity";
 import TeacherSearch from "./pages/Teachersearch"
 import ActivityDetail from "./pages/ActivityDetail";
-import ActivityCreate from "./pages/ActivityCreate"
+import ActivityCreate from "./pages/ActivityCreate";
+import ActivityUpdate from "./pages/ActivityUpdate";
 
 import "./css/App.css"
 
@@ -30,6 +31,7 @@ function App() {
 
       {/* admin routes */}
       <Route path="/createActivity/:club_id" element={<ActivityCreate />} />
+      <Route path="/updateActivity/:activity_id" element={<ActivityUpdate />} />
       
       {/* catch all */}
       <Route path="*" element={<Missing />} />
