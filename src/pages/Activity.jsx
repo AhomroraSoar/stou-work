@@ -267,6 +267,102 @@ export default function Page() {
       });
   };
 
+  const addAdvisor = async (club_id) => {
+    try {
+      const result = await withReactContent(Swal).fire({
+        title: <Typography>เพิ่มอาจารย์ที่ปรึกษา</Typography>,
+        html: `<input id="advisor_id" class="swal2-input" placeholder="รหัสประจำตัว">
+                 <input id="advisor_name" class="swal2-input" placeholder="ชื่อ-สกุล">
+                 <input id="department" class="swal2-input" placeholder="สาชาวิชา">
+                 <input id="advisor_tel" class="swal2-input" placeholder="เบอร์โทรศัพท์">
+                 <input id="line_contact" class="swal2-input" placeholder="Line ID">
+                 `,
+        confirmButtonText: "เพิ่ม",
+        cancelButtonText: "ยกเลิก",
+        showCancelButton: true,
+        allowOutsideClick: false,
+        preConfirm: () => {
+          const advisor_id = document.getElementById("advisor_id").value;
+          const advisor_name = document.getElementById("advisor_name").value;
+          const department = document.getElementById("department").value;
+          const advisor_tel = document.getElementById("advisor_tel").value;
+          const line_contact = document.getElementById("line_contact").value;
+
+          if (
+            !advisor_id.trim() ||
+            !advisor_name.trim() ||
+            !department.trim() ||
+            !advisor_tel.trim() ||
+            !line_contact.trim()
+          ) {
+            withReactContent(Swal).fire({
+              title: (
+                <Typography sx={{ fontSize: 20 }}>
+                  กรุณากรอกข้อมูลให้ครบถ้วน
+                </Typography>
+              ),
+              icon: "error",
+              showConfirmButton: false,
+              timer: 1200,
+            });
+            throw new Error("กรุณากรอกข้อมูลให้ครบถ้วน");
+          }
+
+          return { advisor_id,advisor_name, department, advisor_tel, line_contact };
+        },
+      });
+
+      if (result.dismiss === Swal.DismissReason.cancel) {
+        return;
+      }
+
+      const response = await fetch(
+        `http://localhost:4000/advisorregister/club/${club_id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            advisor_id: result.value.advisor_id,
+            advisor_name: result.value.advisor_name,
+            department: result.value.department,
+            advisor_tel: result.value.advisor_tel,
+            line_contact: result.value.line_contact,
+            club_id : club_id,
+          }),
+        }
+      );
+
+      const responseData = await response.json();
+
+      if (response.ok) {
+        Swal.fire({
+          title: "เสร็จสิ้น",
+          text: responseData.message,
+          icon: "success",
+          showConfirmButton: false,
+          timer: 1000,
+        }).then(() => {
+          window.location.reload(); // Refresh the page upon success
+        });
+      } else {
+        Swal.fire({
+          title: "Error",
+          text: responseData.message || "Failed to add advisor",
+          icon: "error",
+        });
+      }
+    } catch (error) {
+      console.error("Error adding advisor:", error);
+      Swal.fire({
+        title: "Error",
+        text: error.message || "Failed to add advisor",
+        icon: "error",
+      });
+    }
+  };
+
   const role = JSON.parse(localStorage.getItem("user"));
 
   if (role.role_id === 3) {
@@ -377,19 +473,22 @@ export default function Page() {
                             </TableRow>
                           </TableHead>
                           <TableBody>
-                            {teacherdata.map((user) => (
-                              <TableRow key={user.user_id}>
+                            {teacherdata.map((club_advisor) => (
+                              <TableRow key={club_advisor.advisor_id}>
                                 <TableCell sx={{ textAlign: "center" }}>
-                                  {user.user_id}
+                                  {club_advisor.advisor_id}
                                 </TableCell>
                                 <TableCell sx={{ textAlign: "center" }}>
-                                  {user.user_name}
+                                  {club_advisor.advisor_name}
                                 </TableCell>
                               </TableRow>
                             ))}
                           </TableBody>
                         </Table>
-                        <Button sx={{ width: "100%", pt: 1, pb: 1 }}>
+                        <Button
+                          sx={{ width: "100%", pt: 1, pb: 1 }}
+                          onClick={() => addAdvisor(club_id)}
+                        >
                           <AddRoundedIcon style={{ color: "black" }} />
                           <Typography sx={{ color: "#05383B", fontSize: 16 }}>
                             เพิ่มอาจารย์ที่ปรึกษา
