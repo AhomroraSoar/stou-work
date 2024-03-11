@@ -10,6 +10,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TablePagination,
   TextField,
 } from "@mui/material";
 
@@ -22,6 +23,8 @@ import "../css/Teachersearch.css";
 export default function Teachersearch() {
   const [teacher, setTeacher] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
     fetch("http://localhost:4000/teacherlist")
@@ -39,6 +42,15 @@ export default function Teachersearch() {
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
   // Check if teacher is an array before filtering
@@ -151,7 +163,13 @@ export default function Teachersearch() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {filteredTeacher.slice(0, 20).map((club_advisor, index) => (
+                    {(rowsPerPage > 0
+                      ? filteredTeacher.slice(
+                          page * rowsPerPage,
+                          page * rowsPerPage + rowsPerPage
+                        )
+                      : filteredTeacher
+                    ).map((club_advisor, index) => (
                       <TableRow
                         key={club_advisor.advisor_id}
                         className={index % 2 === 0 ? "even" : "odd"}
@@ -179,6 +197,15 @@ export default function Teachersearch() {
                   </TableBody>
                 </Table>
               </TableContainer>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
+                component="div"
+                count={filteredTeacher.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
             </Grid>
           </Paper>
         </Grid>

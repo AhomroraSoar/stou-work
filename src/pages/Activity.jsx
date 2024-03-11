@@ -13,11 +13,13 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TablePagination,
   TextField,
 } from "@mui/material";
 
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import "../css/Swal.css";
 
 import Appbar from "../assets/Appbar.jsx";
 
@@ -30,8 +32,10 @@ export default function Page() {
   const [clubdata, setClubdata] = useState([]);
   const [teacherdata, setTeacherdata] = useState([]);
   const [committeedata, setCommitteedata] = useState([]);
-  const { club_id } = useParams();
   const [participantsCounts, setParticipantsCounts] = useState({});
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(4);
+  const { club_id } = useParams();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -308,7 +312,13 @@ export default function Page() {
             throw new Error("กรุณากรอกข้อมูลให้ครบถ้วน");
           }
 
-          return { advisor_id,advisor_name, department, advisor_tel, line_contact };
+          return {
+            advisor_id,
+            advisor_name,
+            department,
+            advisor_tel,
+            line_contact,
+          };
         },
       });
 
@@ -329,7 +339,7 @@ export default function Page() {
             department: result.value.department,
             advisor_tel: result.value.advisor_tel,
             line_contact: result.value.line_contact,
-            club_id : club_id,
+            club_id: club_id,
           }),
         }
       );
@@ -361,6 +371,129 @@ export default function Page() {
         icon: "error",
       });
     }
+  };
+
+  const addCommittee = async (club_id) => {
+    try {
+      const committeeRoles = await fetch(
+        "http://localhost:4000/committee_role"
+      );
+      const committeeRolesData = await committeeRoles.json();
+
+      const result = await withReactContent(Swal).fire({
+        title: <Typography>เพิ่มคณะกรรมการ</Typography>,
+        html: `
+          <input id="committee_name" class="swal2-input" placeholder="ชื่อ-สกุล">
+          <input id="committee_tel" class="swal2-input" placeholder="เบอร์โทรศัพท์">
+          <input id="committee_line" class="swal2-input" placeholder="Line">
+          <select id="committee_role_id" class="swal2-select">
+          <option value="">กรุณาเลือกตำแหน่ง</option> <!-- Empty option -->
+          ${committeeRolesData
+            .map(
+              (role) =>
+                `<option value="${role.committee_role_id}">${role.committee_role_name}</option>`
+            )
+            .join("")}
+          </select>
+        `,
+        confirmButtonText: "เพิ่ม",
+        cancelButtonText: "ยกเลิก",
+        showCancelButton: true,
+        allowOutsideClick: false,
+        preConfirm: () => {
+          const committee_name =
+            document.getElementById("committee_name").value;
+          const committee_tel = document.getElementById("committee_tel").value;
+          const committee_line =
+            document.getElementById("committee_line").value;
+          const committee_role_id =
+            document.getElementById("committee_role_id").value;
+
+          if (
+            !committee_name.trim() ||
+            !committee_tel.trim() ||
+            !committee_line.trim() ||
+            !committee_role_id.trim()
+          ) {
+            withReactContent(Swal).fire({
+              title: (
+                <Typography sx={{ fontSize: 20 }}>
+                  กรุณากรอกข้อมูลให้ครบถ้วน
+                </Typography>
+              ),
+              icon: "error",
+              showConfirmButton: false,
+              timer: 1200,
+            });
+            throw new Error("กรุณากรอกข้อมูลให้ครบถ้วน");
+          }
+
+          return {
+            committee_name,
+            committee_tel,
+            committee_line,
+            committee_role_id,
+          };
+        },
+      });
+
+      if (result.dismiss === Swal.DismissReason.cancel) {
+        return;
+      }
+
+      const response = await fetch(
+        `http://localhost:4000/committeeregister/club/${club_id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            committee_name: result.value.committee_name,
+            committee_tel: result.value.committee_tel,
+            committee_line: result.value.committee_line,
+            committee_role_id: result.value.committee_role_id,
+            club_id: club_id,
+          }),
+        }
+      );
+
+      const responseData = await response.json();
+
+      if (response.ok) {
+        Swal.fire({
+          title: "เสร็จสิ้น",
+          text: responseData.message,
+          icon: "success",
+          showConfirmButton: false,
+          timer: 1000,
+        }).then(() => {
+          window.location.reload(); // Refresh the page upon success
+        });
+      } else {
+        Swal.fire({
+          title: "Error",
+          text: responseData.message || "Failed to add advisor",
+          icon: "error",
+        });
+      }
+    } catch (error) {
+      console.error("Error adding advisor:", error);
+      Swal.fire({
+        title: "Error",
+        text: error.message || "Failed to add advisor",
+        icon: "error",
+      });
+    }
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
   const role = JSON.parse(localStorage.getItem("user"));
@@ -473,7 +606,13 @@ export default function Page() {
                             </TableRow>
                           </TableHead>
                           <TableBody>
-                            {teacherdata.map((club_advisor) => (
+                            {(rowsPerPage > 0
+                              ? teacherdata.slice(
+                                  page * rowsPerPage,
+                                  page * rowsPerPage + rowsPerPage
+                                )
+                              : teacherdata
+                            ).map((club_advisor) => (
                               <TableRow key={club_advisor.advisor_id}>
                                 <TableCell sx={{ textAlign: "center" }}>
                                   {club_advisor.advisor_id}
@@ -485,6 +624,20 @@ export default function Page() {
                             ))}
                           </TableBody>
                         </Table>
+                        <TablePagination
+                          rowsPerPageOptions={[
+                            4,
+                            10,
+                            25,
+                            { label: "All", value: -1 },
+                          ]}
+                          component="div"
+                          count={teacherdata.length}
+                          rowsPerPage={rowsPerPage}
+                          page={page}
+                          onPageChange={handleChangePage}
+                          onRowsPerPageChange={handleChangeRowsPerPage}
+                        />
                         <Button
                           sx={{ width: "100%", pt: 1, pb: 1 }}
                           onClick={() => addAdvisor(club_id)}
@@ -536,11 +689,6 @@ export default function Page() {
                               <TableCell
                                 sx={{ textAlign: "center", color: "#ffffff" }}
                               >
-                                รหัสประจำตัว
-                              </TableCell>
-                              <TableCell
-                                sx={{ textAlign: "center", color: "#ffffff" }}
-                              >
                                 ชื่อ - นามสกุล
                               </TableCell>
                               <TableCell
@@ -551,22 +699,42 @@ export default function Page() {
                             </TableRow>
                           </TableHead>
                           <TableBody>
-                            {committeedata.map((user) => (
-                              <TableRow key={user.user_id}>
+                            {(rowsPerPage > 0
+                              ? committeedata.slice(
+                                  page * rowsPerPage,
+                                  page * rowsPerPage + rowsPerPage
+                                )
+                              : committeedata
+                            ).map((club_committee) => (
+                              <TableRow key={club_committee.committee_id}>
                                 <TableCell sx={{ textAlign: "center" }}>
-                                  {user.user_id}
+                                  {club_committee.committee_name}
                                 </TableCell>
                                 <TableCell sx={{ textAlign: "center" }}>
-                                  {user.user_name}
-                                </TableCell>
-                                <TableCell sx={{ textAlign: "center" }}>
-                                  {user.committee_role_name}
+                                  {club_committee.committee_role_name}
                                 </TableCell>
                               </TableRow>
                             ))}
                           </TableBody>
                         </Table>
-                        <Button sx={{ width: "100%", pt: 1, pb: 1 }}>
+                        <TablePagination
+                          rowsPerPageOptions={[
+                            4,
+                            10,
+                            25,
+                            { label: "All", value: -1 },
+                          ]}
+                          component="div"
+                          count={teacherdata.length}
+                          rowsPerPage={rowsPerPage}
+                          page={page}
+                          onPageChange={handleChangePage}
+                          onRowsPerPageChange={handleChangeRowsPerPage}
+                        />
+                        <Button
+                          sx={{ width: "100%", pt: 1, pb: 1 }}
+                          onClick={() => addCommittee(club_id)}
+                        >
                           <AddRoundedIcon style={{ color: "black" }} />
                           <Typography sx={{ color: "#05383B", fontSize: 16 }}>
                             เพิ่มคณะกรรมการ
@@ -613,7 +781,7 @@ export default function Page() {
                         component={Link}
                         to={`/activity/${activity.activity_id}`}
                         sx={{
-                          width: 800,
+                          width: "90%",
                           color: "#222831",
                           fontSize: 20,
                           pb: 1.5,
@@ -647,7 +815,7 @@ export default function Page() {
                             activity.activity_name
                           )
                         }
-                        sx={{ ml: 2.75 }}
+                        sx={{ ml: 0 }}
                       >
                         ลบ
                       </Button>
@@ -778,19 +946,39 @@ export default function Page() {
                             </TableRow>
                           </TableHead>
                           <TableBody>
-                            {teacherdata.map((user) => (
-                              <TableRow key={user.user_id}>
+                            {(rowsPerPage > 0
+                              ? teacherdata.slice(
+                                  page * rowsPerPage,
+                                  page * rowsPerPage + rowsPerPage
+                                )
+                              : teacherdata
+                            ).map((club_advisor) => (
+                              <TableRow key={club_advisor.advisor_id}>
                                 <TableCell sx={{ textAlign: "center" }}>
-                                  {user.user_id}
+                                  {club_advisor.advisor_id}
                                 </TableCell>
                                 <TableCell sx={{ textAlign: "center" }}>
-                                  {user.user_name}
+                                  {club_advisor.advisor_name}
                                 </TableCell>
                               </TableRow>
                             ))}
                           </TableBody>
                         </Table>
                       </TableContainer>
+                      <TablePagination
+                        rowsPerPageOptions={[
+                          4,
+                          10,
+                          25,
+                          { label: "All", value: -1 },
+                        ]}
+                        component="div"
+                        count={teacherdata.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                      />
                     </Grid>
                   </Paper>
                 </Grid>
@@ -832,11 +1020,6 @@ export default function Page() {
                               <TableCell
                                 sx={{ textAlign: "center", color: "#ffffff" }}
                               >
-                                รหัสประจำตัว
-                              </TableCell>
-                              <TableCell
-                                sx={{ textAlign: "center", color: "#ffffff" }}
-                              >
                                 ชื่อ - นามสกุล
                               </TableCell>
                               <TableCell
@@ -847,22 +1030,39 @@ export default function Page() {
                             </TableRow>
                           </TableHead>
                           <TableBody>
-                            {committeedata.map((user) => (
-                              <TableRow key={user.user_id}>
+                          {(rowsPerPage > 0
+                              ? committeedata.slice(
+                                  page * rowsPerPage,
+                                  page * rowsPerPage + rowsPerPage
+                                )
+                              : committeedata
+                            ).map((club_committee) => (
+                              <TableRow key={club_committee.committee_id}>
                                 <TableCell sx={{ textAlign: "center" }}>
-                                  {user.user_id}
+                                  {club_committee.committee_name}
                                 </TableCell>
                                 <TableCell sx={{ textAlign: "center" }}>
-                                  {user.user_name}
-                                </TableCell>
-                                <TableCell sx={{ textAlign: "center" }}>
-                                  {user.committee_role_name}
+                                  {club_committee.committee_role_name}
                                 </TableCell>
                               </TableRow>
                             ))}
                           </TableBody>
                         </Table>
                       </TableContainer>
+                      <TablePagination
+                        rowsPerPageOptions={[
+                          4,
+                          10,
+                          25,
+                          { label: "All", value: -1 },
+                        ]}
+                        component="div"
+                        count={committeedata.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                      />
                     </Grid>
                   </Paper>
                 </Grid>
