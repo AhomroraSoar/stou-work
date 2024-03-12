@@ -6,6 +6,16 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TablePagination,
+  TextField,
+} from "@mui/material";
 
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
@@ -20,6 +30,8 @@ export default function Page() {
   const [data, setData] = useState([]);
   const { swn_id } = useParams();
   const [clubmemberCounts, setClubmemberCounts] = useState({});
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -262,6 +274,15 @@ export default function Page() {
       });
   };
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   const role = JSON.parse(localStorage.getItem("user"));
 
   if (role.role_id === 3) {
@@ -320,7 +341,13 @@ export default function Page() {
                   pt: 0.5,
                 }}
               >
-                {data.map((club) => (
+                {(rowsPerPage > 0
+                  ? data.slice(
+                      page * rowsPerPage,
+                      page * rowsPerPage + rowsPerPage
+                    )
+                  : data
+                ).map((club) => (
                   <Grid key={club.club_id}>
                     <Button
                       component={Link}
@@ -361,6 +388,15 @@ export default function Page() {
                     </Button>
                   </Grid>
                 ))}
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 15, { label: "All", value: -1 }]}
+                  component="div"
+                  count={data.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
                 <Button
                   onClick={() => addClub(swn_id)}
                   sx={{ width: 800, height: 50 }}
@@ -432,7 +468,13 @@ export default function Page() {
                   pt: 0.5,
                 }}
               >
-                {data.map((club) => (
+                {(rowsPerPage > 0
+                  ? data.slice(
+                      page * rowsPerPage,
+                      page * rowsPerPage + rowsPerPage
+                    )
+                  : data
+                ).map((club) => (
                   <Button
                     component={Link}
                     to={`/club/${club.club_id}`}
@@ -455,6 +497,15 @@ export default function Page() {
                     </Typography>
                   </Button>
                 ))}
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 15, { label: "All", value: -1 }]}
+                  component="div"
+                  count={data.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
               </Paper>
             </Grid>
           </Grid>

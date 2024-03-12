@@ -14,7 +14,6 @@ import {
   TableHead,
   TableRow,
   TablePagination,
-  TextField,
 } from "@mui/material";
 
 import Swal from "sweetalert2";
@@ -34,7 +33,12 @@ export default function Page() {
   const [committeedata, setCommitteedata] = useState([]);
   const [participantsCounts, setParticipantsCounts] = useState({});
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(4);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [teachpage, setTeachpage] = useState(0);
+  const [rowsPerTeachpage, setRowsTeachpage] = useState(5);
+  const [actpage, setActpage] = useState(0);
+  const [rowsPerActpage, setRowsPerActpage] = useState(10);
+
   const { club_id } = useParams();
 
   useEffect(() => {
@@ -487,13 +491,31 @@ export default function Page() {
     }
   };
 
+  //set rows teacherlist
+  const handleChangeTeacherListpage = (event, newPage) => {
+    setTeachpage(newPage);
+  };
+  const handleChangeRowsPerTeacherListPage = (event) => {
+    setRowsTeachpage(parseInt(event.target.value, 10)); //parsed as a base-10 (decimal) integer
+    setTeachpage(0);
+  };
+
+  //set rows committeelist
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+
+  //set rows activitylist
+  const handleChangeActListpage = (event, newPage) => {
+    setActpage(newPage);
+  };
+  const handleChangeRowsPerActListpage = (event) => {
+    setRowsPerActpage(parseInt(event.target.value, 10));
+    setActpage(0);
   };
 
   const role = JSON.parse(localStorage.getItem("user"));
@@ -606,10 +628,11 @@ export default function Page() {
                             </TableRow>
                           </TableHead>
                           <TableBody>
-                            {(rowsPerPage > 0
+                            {(rowsPerTeachpage > 0
                               ? teacherdata.slice(
-                                  page * rowsPerPage,
-                                  page * rowsPerPage + rowsPerPage
+                                  teachpage * rowsPerTeachpage,
+                                  teachpage * rowsPerTeachpage +
+                                    rowsPerTeachpage
                                 )
                               : teacherdata
                             ).map((club_advisor) => (
@@ -626,17 +649,19 @@ export default function Page() {
                         </Table>
                         <TablePagination
                           rowsPerPageOptions={[
-                            4,
+                            5,
                             10,
                             25,
                             { label: "All", value: -1 },
                           ]}
                           component="div"
                           count={teacherdata.length}
-                          rowsPerPage={rowsPerPage}
-                          page={page}
-                          onPageChange={handleChangePage}
-                          onRowsPerPageChange={handleChangeRowsPerPage}
+                          rowsPerPage={rowsPerTeachpage}
+                          page={teachpage}
+                          onPageChange={handleChangeTeacherListpage}
+                          onRowsPerPageChange={
+                            handleChangeRowsPerTeacherListPage
+                          }
                         />
                         <Button
                           sx={{ width: "100%", pt: 1, pb: 1 }}
@@ -719,13 +744,13 @@ export default function Page() {
                         </Table>
                         <TablePagination
                           rowsPerPageOptions={[
-                            4,
+                            5,
                             10,
                             25,
                             { label: "All", value: -1 },
                           ]}
                           component="div"
-                          count={teacherdata.length}
+                          count={committeedata.length}
                           rowsPerPage={rowsPerPage}
                           page={page}
                           onPageChange={handleChangePage}
@@ -775,7 +800,13 @@ export default function Page() {
                     ml: 5,
                   }}
                 >
-                  {data.map((activity) => (
+                  {(rowsPerActpage > 0
+                    ? data.slice(
+                        actpage * rowsPerActpage,
+                        actpage * rowsPerActpage + rowsPerActpage
+                      )
+                    : data
+                  ).map((activity) => (
                     <Grid key={activity.activity_id}>
                       <Button
                         component={Link}
@@ -821,6 +852,20 @@ export default function Page() {
                       </Button>
                     </Grid>
                   ))}
+                  <TablePagination
+                    rowsPerPageOptions={[
+                      10,
+                      15,
+                      25,
+                      { label: "All", value: -1 },
+                    ]}
+                    component="div"
+                    count={data.length}
+                    rowsPerPage={rowsPerActpage}
+                    page={actpage}
+                    onPageChange={handleChangeActListpage}
+                    onRowsPerPageChange={handleChangeRowsPerActListpage}
+                  />
                   <Button
                     component={Link}
                     to={`/createActivity/${club_id}`}
@@ -946,10 +991,11 @@ export default function Page() {
                             </TableRow>
                           </TableHead>
                           <TableBody>
-                            {(rowsPerPage > 0
+                            {(rowsPerTeachpage > 0
                               ? teacherdata.slice(
-                                  page * rowsPerPage,
-                                  page * rowsPerPage + rowsPerPage
+                                  teachpage * rowsPerTeachpage,
+                                  teachpage * rowsPerTeachpage +
+                                    rowsPerTeachpage
                                 )
                               : teacherdata
                             ).map((club_advisor) => (
@@ -967,17 +1013,17 @@ export default function Page() {
                       </TableContainer>
                       <TablePagination
                         rowsPerPageOptions={[
-                          4,
+                          5,
                           10,
                           25,
                           { label: "All", value: -1 },
                         ]}
                         component="div"
                         count={teacherdata.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
+                        rowsPerPage={rowsPerTeachpage}
+                        page={teachpage}
+                        onPageChange={handleChangeTeacherListpage}
+                        onRowsPerPageChange={handleChangeRowsPerTeacherListPage}
                       />
                     </Grid>
                   </Paper>
@@ -1030,7 +1076,7 @@ export default function Page() {
                             </TableRow>
                           </TableHead>
                           <TableBody>
-                          {(rowsPerPage > 0
+                            {(rowsPerPage > 0
                               ? committeedata.slice(
                                   page * rowsPerPage,
                                   page * rowsPerPage + rowsPerPage
@@ -1051,7 +1097,7 @@ export default function Page() {
                       </TableContainer>
                       <TablePagination
                         rowsPerPageOptions={[
-                          4,
+                          5,
                           10,
                           25,
                           { label: "All", value: -1 },
@@ -1097,7 +1143,13 @@ export default function Page() {
                     ml: 5,
                   }}
                 >
-                  {data.map((activity) => (
+                  {(rowsPerActpage > 0
+                    ? data.slice(
+                        actpage * rowsPerActpage,
+                        actpage * rowsPerActpage + rowsPerActpage
+                      )
+                    : data
+                  ).map((activity) => (
                     <Button
                       component={Link}
                       to={`/activity/${activity.activity_id}`}
@@ -1128,6 +1180,20 @@ export default function Page() {
                       </Typography>
                     </Button>
                   ))}
+                  <TablePagination
+                    rowsPerPageOptions={[
+                      10,
+                      15,
+                      25,
+                      { label: "All", value: -1 },
+                    ]}
+                    component="div"
+                    count={data.length}
+                    rowsPerPage={rowsPerActpage}
+                    page={actpage}
+                    onPageChange={handleChangeActListpage}
+                    onRowsPerPageChange={handleChangeRowsPerActListpage}
+                  />
                 </Paper>
               </Grid>
             </Grid>

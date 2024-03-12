@@ -11,7 +11,9 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
+  TablePagination,
+  Card,
+  CardMedia,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 
@@ -26,6 +28,11 @@ export default function Page() {
   const [paticipantdata, setParticipantData] = useState([]);
   const { activity_id } = useParams();
   const [participantsCounts, setParticipantsCounts] = useState({});
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [file, setFile] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
+  const [images, setImages] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -171,11 +178,87 @@ export default function Page() {
     }
   };
 
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:4000/images/${activity_id}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch images");
+        }
+        const data = await response.json();
+        setImages(data);
+      } catch (error) {
+        console.error("Error fetching images:", error);
+      }
+    };
+
+    fetchImages();
+  }, [activity_id]);
+
   const UpdateActivity = (activity_id) => {
     window.location = "/updateactivity/" + activity_id;
   };
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
+
+    if (selectedFile) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageUrl(reader.result);
+      };
+      reader.readAsDataURL(selectedFile);
+    } else {
+      setImageUrl(null);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!file) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Please select a file",
+      });
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("picture", file);
+
+      const response = await fetch(
+        `http://localhost:4000/pictureupload/${activity_id}`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to upload file");
+      }
+
+      const data = await response.json();
+      const pictureUrl = data.url;
+    } catch (error) {
+      console.error("Error uploading picture:", error);
+    }
+  };
+
   const role = JSON.parse(localStorage.getItem("user"));
+
   if (role.role_id === 3) {
     return (
       <Appbar>
@@ -190,7 +273,7 @@ export default function Page() {
             minHeight: "92.8vh",
           }}
         >
-          <Grid container>
+          <Grid container sx={{ mb: 5 }}>
             <Grid item xs={12}>
               <Grid
                 item
@@ -371,7 +454,13 @@ export default function Page() {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {paticipantdata.slice(0, 10).map((user, index) => (
+                          {(rowsPerPage > 0
+                            ? paticipantdata.slice(
+                                page * rowsPerPage,
+                                page * rowsPerPage + rowsPerPage
+                              )
+                            : paticipantdata
+                          ).map((user, index) => (
                             <TableRow
                               key={user.user_id}
                               className={index % 2 === 0 ? "even" : "odd"}
@@ -384,12 +473,74 @@ export default function Page() {
                               </TableCell>
                             </TableRow>
                           ))}
+                          <TablePagination
+                            rowsPerPageOptions={[
+                              10,
+                              15,
+                              25,
+                              { label: "All", value: -1 },
+                            ]}
+                            component="div"
+                            count={paticipantdata.length}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            onPageChange={handleChangePage}
+                            onRowsPerPageChange={handleChangeRowsPerPage}
+                          />
                         </TableBody>
                       </Table>
                     </TableContainer>
                   </Grid>
                 </Paper>
               </Grid>
+            </Grid>
+          </Grid>
+          <Grid container spacing={2}>
+            {images.map((image) => (
+              <Grid item xs={12} sm={6} md={4} lg={3} key={image.img_id}>
+                <Card>
+                  <CardMedia
+                    image={image.img_url.replace(/\\/g, '/')}
+                    title={image.img_url}
+                  />
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+          <Grid container spacing={2} alignItems="center" height="300px">
+            <Grid item>
+              {imageUrl ? (
+                <img
+                  src={imageUrl}
+                  alt="Preview"
+                  style={{ maxWidth: "200px", maxHeight: "200px" }}
+                />
+              ) : (
+                <Typography>No image selected</Typography>
+              )}
+            </Grid>
+            <Grid item>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                style={{ display: "none" }}
+                id="file-upload"
+              />
+              <label htmlFor="file-upload">
+                <Button variant="contained" component="span">
+                  Choose File
+                </Button>
+              </label>
+            </Grid>
+            <Grid item>
+              <Button
+                variant="contained"
+                onClick={handleUpload}
+                disabled={!file}
+              >
+                Upload
+              </Button>
             </Grid>
           </Grid>
         </Box>
@@ -569,31 +720,63 @@ export default function Page() {
                         >
                           <TableRow>
                             <TableCell
-                              sx={{ textAlign: "center", color: "#ffffff" }}
+                              sx={{
+                                textAlign: "center",
+                                color: "#ffffff",
+                                width: "50%",
+                              }}
                             >
                               รหัสประจำตัว
                             </TableCell>
                             <TableCell
-                              sx={{ textAlign: "center", color: "#ffffff" }}
+                              sx={{
+                                textAlign: "center",
+                                color: "#ffffff",
+                                width: "50%",
+                              }}
                             >
                               ชื่อ - นามสกุล
                             </TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {paticipantdata.slice(0, 10).map((user, index) => (
+                          {(rowsPerPage > 0
+                            ? paticipantdata.slice(
+                                page * rowsPerPage,
+                                page * rowsPerPage + rowsPerPage
+                              )
+                            : paticipantdata
+                          ).map((user, index) => (
                             <TableRow
                               key={user.user_id}
                               className={index % 2 === 0 ? "even" : "odd"}
                             >
-                              <TableCell sx={{ textAlign: "center" }}>
+                              <TableCell
+                                sx={{ textAlign: "center", width: "50%" }}
+                              >
                                 {user.user_id}
                               </TableCell>
-                              <TableCell sx={{ textAlign: "center" }}>
+                              <TableCell
+                                sx={{ textAlign: "center", width: "50%" }}
+                              >
                                 {user.user_name}
                               </TableCell>
                             </TableRow>
                           ))}
+                          <TablePagination
+                            rowsPerPageOptions={[
+                              10,
+                              15,
+                              25,
+                              { label: "All", value: -1 },
+                            ]}
+                            component="div"
+                            count={paticipantdata.length}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            onPageChange={handleChangePage}
+                            onRowsPerPageChange={handleChangeRowsPerPage}
+                          />
                         </TableBody>
                       </Table>
                     </TableContainer>

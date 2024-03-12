@@ -77,6 +77,7 @@ export default function Teachersearch() {
           container
           sx={{
             pt: 5,
+            pb:5,
             display: "flex",
             justifyContent: "center",
             alignContent: "center",
