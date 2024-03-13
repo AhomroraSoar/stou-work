@@ -14,10 +14,12 @@ import {
   TablePagination,
   Card,
   CardMedia,
+  CardActionArea,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 
 import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 import Appbar from "../assets/Appbar.jsx";
 
@@ -252,9 +254,84 @@ export default function Page() {
 
       const data = await response.json();
       const pictureUrl = data.url;
+
+      Swal.fire({
+        icon: "success",
+        title: "Success!",
+        text: "File uploaded successfully",
+      }).then((result) => {
+        if (result.isConfirmed || result.isDismissed) {
+          window.location.reload(); // Refresh the page
+        }
+      });
     } catch (error) {
       console.error("Error uploading picture:", error);
+      Swal.fire({
+        icon: "error",
+        title: "ไม่สามารถอัพโหลดไฟล์ที่เลือกได้",
+      });
     }
+  };
+
+  const IMGdelete = (img_id) => {
+    withReactContent(Swal)
+      .fire({
+        title: (
+          <Typography variant="h6">
+            ยืนยันว่าจะลบรูปภาพนี้ ?
+          </Typography>
+        ),
+        html: (
+          <div>
+            <span style={{ color: "red" }}>
+              หากยืนยันแล้วคุณจะไม่สามารถย้อนกลับได้!!
+            </span>
+          </div>
+        ),
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        confirmButtonText: "ลบ",
+        cancelButtonText: "ยกเลิก",
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          const data = {
+            img_id: img_id,
+          };
+          fetch("http://localhost:4000/deleteimage", {
+            method: "DELETE",
+            headers: {
+              Accept: "application/form-data",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          })
+            .then((res) => res.json())
+            .then((rows) => {
+              if (rows["status"] === "ok") {
+                Swal.fire({
+                  icon: "success",
+                  title: "เสร็จสิ้น",
+                  text: rows["message"],
+                  showConfirmButton: false,
+                  timer: 1250,
+                }).then(() => {
+                  window.location.reload();
+                });
+              }
+            });
+        }
+      });
+  };
+
+  const handleCancel = () => {
+    setFile(null);
+    setImageUrl(null);
+  };
+
+  const handleImageClick = (imageUrl) => {
+    window.open(imageUrl, "_blank");
   };
 
   const role = JSON.parse(localStorage.getItem("user"));
@@ -495,52 +572,119 @@ export default function Page() {
               </Grid>
             </Grid>
           </Grid>
-          <Grid container spacing={2}>
+          <Grid container sx={{ display: "flex", justifyContent: "center" }}>
             {images.map((image) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={image.img_id}>
-                <Card>
-                  <CardMedia
-                    image={image.img_url.replace(/\\/g, '/')}
-                    title={image.img_url}
-                  />
+              <Grid
+                item
+                key={image.img_id}
+                xs={4}
+                sx={{ display: "flex", justifyContent: "center" }}
+              >
+                <Card
+                  sx={{
+                    width: "100%",
+                    p: 1,
+                    m: 2,
+                    raised: true,
+                  }}
+                  style={{
+                    borderRadius: 10,
+                  }}
+                >
+                  <CardActionArea
+                    onClick={() =>
+                      handleImageClick(image.img_url.replace(/\\/g, "/"))
+                    }
+                  >
+                    <CardMedia
+                      component="img"
+                      sx={{
+                        width: "100%",
+                        height: 400,
+                        borderRadius: 2,
+                        display: "flex",
+                        justifyContent: "center",
+                      }}
+                      image={image.img_url.replace(/\\/g, "/")}
+                    />
+                  </CardActionArea>
+                  <Grid sx={{ display: "flex", justifyContent: "center" }}>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      sx={{ mt: 1, mb: 1, width: 100 }}
+                      onClick={() => IMGdelete(image.img_id)}
+                    >
+                      ลบ
+                    </Button>
+                  </Grid>
                 </Card>
               </Grid>
             ))}
           </Grid>
-          <Grid container spacing={2} alignItems="center" height="300px">
-            <Grid item>
-              {imageUrl ? (
-                <img
-                  src={imageUrl}
-                  alt="Preview"
-                  style={{ maxWidth: "200px", maxHeight: "200px" }}
-                />
-              ) : (
-                <Typography>No image selected</Typography>
-              )}
-            </Grid>
-            <Grid item>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                style={{ display: "none" }}
-                id="file-upload"
-              />
-              <label htmlFor="file-upload">
-                <Button variant="contained" component="span">
-                  Choose File
-                </Button>
-              </label>
-            </Grid>
-            <Grid item>
-              <Button
-                variant="contained"
-                onClick={handleUpload}
-                disabled={!file}
+          <Grid sx={{ display: "flex", justifyContent: "center" }}>
+            <Grid
+              container
+              spacing={2}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                mt: 5,
+                mb: 5,
+                maxWidth: "25%",
+                backgroundColor: "white",
+                borderRadius: 3,
+              }}
+            >
+              <Grid
+                item
+                xs={12}
+                sx={{ display: "flex", justifyContent: "center" }}
               >
-                Upload
-              </Button>
+                {imageUrl ? (
+                  <CardMedia
+                    component="img"
+                    src={imageUrl}
+                    alt="Preview"
+                    sx={{ mr: 1.75 }}
+                  />
+                ) : (
+                  <Typography>กรุณาเลือกรูปภาพที่ต้องการอัพโหลด</Typography>
+                )}
+              </Grid>
+              <Grid item sx={{ pb: 1 }}>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  style={{ display: "none" }}
+                  id="file-upload"
+                />
+                <label htmlFor="file-upload">
+                  <Button variant="contained" component="span">
+                    เลือกไฟล์
+                  </Button>
+                </label>
+              </Grid>
+              <Grid item>
+                <Button
+                  variant="contained"
+                  onClick={handleUpload}
+                  disabled={!file}
+                >
+                  อัพโหลด
+                </Button>
+              </Grid>
+              <Grid item>
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={handleCancel}
+                  disabled={!file}
+                >
+                  ยกเลิก
+                </Button>
+              </Grid>
             </Grid>
           </Grid>
         </Box>
