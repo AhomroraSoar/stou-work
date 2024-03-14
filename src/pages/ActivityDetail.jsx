@@ -296,18 +296,19 @@ export default function Page() {
       })
       .then((result) => {
         if (result.isConfirmed) {
-          const data = {
-            img_id: img_id,
-          };
-          fetch("http://localhost:4000/deleteimage", {
+          fetch(`http://localhost:4000/deleteimage/${img_id}`, {
             method: "DELETE",
             headers: {
-              Accept: "application/form-data",
+              Accept: "application/json",
               "Content-Type": "application/json",
             },
-            body: JSON.stringify(data),
           })
-            .then((res) => res.json())
+            .then((res) => {
+              if (!res.ok) {
+                throw new Error('Failed to delete image');
+              }
+              return res.json();
+            })
             .then((rows) => {
               if (rows["status"] === "ok") {
                 Swal.fire({
@@ -320,10 +321,19 @@ export default function Page() {
                   window.location.reload();
                 });
               }
+            })
+            .catch((error) => {
+              console.error("Error deleting image:", error);
+              Swal.fire({
+                icon: "error",
+                title: "เกิดข้อผิดพลาด",
+                text: "ไม่สามารถลบรูปภาพได้",
+              });
             });
         }
       });
   };
+  
 
   const handleCancel = () => {
     setFile(null);
@@ -542,10 +552,10 @@ export default function Page() {
                               key={user.user_id}
                               className={index % 2 === 0 ? "even" : "odd"}
                             >
-                              <TableCell sx={{ textAlign: "center" }}>
+                              <TableCell sx={{ textAlign: "center",width:'50%' }}>
                                 {user.user_id}
                               </TableCell>
-                              <TableCell sx={{ textAlign: "center" }}>
+                              <TableCell sx={{ textAlign: "center",width:'50%' }}>
                                 {user.user_name}
                               </TableCell>
                             </TableRow>

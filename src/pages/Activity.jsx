@@ -196,10 +196,7 @@ export default function Page() {
 
         const result = await response.json();
 
-        console.log("Result status:", result.status);
-
         if (result.status === "ok") {
-          console.log("Inside error block");
           Swal.fire({
             icon: "success",
             title: "ลงทะเบียนเรียบร้อย",
@@ -208,7 +205,6 @@ export default function Page() {
             timerProgressBar: false,
           });
         } else if (result.status === "registered") {
-          console.log("Inside error block");
           Swal.fire({
             icon: "error",
             title: "ไม่สามารถลงทะเบียนได้",
@@ -518,6 +514,35 @@ export default function Page() {
     setActpage(0);
   };
 
+  const showteacherData = (club_advisor) => {
+    Swal.fire({
+      showConfirmButton: false,
+      html: `
+        <div>
+          <p><strong>รหัสประจำตัว:</strong> ${club_advisor.advisor_id}</p>
+          <p><strong>ชื่อ - สกุล:</strong> ${club_advisor.advisor_name}</p>
+          <p><strong>เบอร์โทรศัพท์:</strong> ${club_advisor.advisor_tel}</p>
+          <p><strong>สาขาวิชา:</strong> ${club_advisor.department}</p>
+          <p><strong>Line:</strong> ${club_advisor.line_contact}</p>
+        </div>
+      `,
+    });
+  };
+
+  const showcommitteeData = (club_committee) => {
+    Swal.fire({
+      showConfirmButton: false,
+      html: `
+        <div>
+          <p><strong>ชื่อ - สกุล:</strong> ${club_committee.committee_name}</p>
+          <p><strong>เบอร์โทรศัพท์:</strong> ${club_committee.committee_tel}</p>
+          <p><strong>Line:</strong> ${club_committee.committee_line}</p>
+          <p><strong>ตำแหน่ง:</strong> ${club_committee.committee_role_name}</p>
+        </div>
+      `,
+    });
+  };
+
   const role = JSON.parse(localStorage.getItem("user"));
 
   if (role.role_id === 3) {
@@ -535,7 +560,7 @@ export default function Page() {
           }}
         >
           <Grid container>
-            <Grid item xs={12}>
+            <Grid container xs={12}>
               <Grid
                 item
                 textAlign="center"
@@ -562,26 +587,25 @@ export default function Page() {
               </Grid>
             </Grid>
 
-            <Grid
-              container
-              sx={{ display: "flex", justifyContent: "center", mt: 5 }}
-            >
-              <Grid item>
-                <Button
-                  variant="contained"
-                  color="success"
-                  sx={{
-                    width: 450,
-                    height: 100,
-                    fontSize: "30px",
-                    borderRadius: 2,
-                  }}
-                  onClick={handleRegisterClick}
-                >
-                  สมัครสมาชิก
-                </Button>
+            <Grid container sx={{ mt: 5 }}>
+              <Grid container xs={5}  direction="row" alignItems="center" sx={{border:5}}>
+                <Grid item xs={12}  display="flex" alignItems="center">
+                  <Button
+                    variant="contained"
+                    color="success"
+                    sx={{
+                      width: 450,
+                      height: 100,
+                      fontSize: "30px",
+                      borderRadius: 2,
+                    }}
+                    onClick={handleRegisterClick}
+                  >
+                    สมัครสมาชิก
+                  </Button>
+                </Grid>
 
-                <Grid item sx={{ mt: 2 }}>
+                <Grid item xs={12} >
                   <Paper
                     elevation={8}
                     sx={{
@@ -608,7 +632,7 @@ export default function Page() {
                       textAlign: "center",
                     }}
                   >
-                    <Grid item xs={12} sx={{ width: "100%" }}>
+                    <Grid item>
                       <TableContainer>
                         <Table>
                           <TableHead
@@ -625,6 +649,9 @@ export default function Page() {
                               >
                                 ชื่อ - นามสกุล
                               </TableCell>
+                              <TableCell
+                                sx={{ textAlign: "center", color: "#ffffff" }}
+                              ></TableCell>
                             </TableRow>
                           </TableHead>
                           <TableBody>
@@ -636,12 +663,25 @@ export default function Page() {
                                 )
                               : teacherdata
                             ).map((club_advisor) => (
-                              <TableRow key={club_advisor.advisor_id}>
+                              <TableRow
+                                key={club_advisor.advisor_id}
+                                onClick={() => showteacherData(club_advisor)}
+                                style={{ cursor: "pointer" }}
+                              >
                                 <TableCell sx={{ textAlign: "center" }}>
                                   {club_advisor.advisor_id}
                                 </TableCell>
                                 <TableCell sx={{ textAlign: "center" }}>
                                   {club_advisor.advisor_name}
+                                </TableCell>
+                                <TableCell
+                                  sx={{
+                                    justifyContent: "center",
+                                    display: "inline",
+                                  }}
+                                >
+                                  <Button>แก้ไข</Button>
+                                  <Button>ลบ</Button>
                                 </TableCell>
                               </TableRow>
                             ))}
@@ -677,7 +717,7 @@ export default function Page() {
                   </Paper>
                 </Grid>
 
-                <Grid item sx={{ mt: 2, mb: 10 }}>
+                <Grid item xs={12} >
                   <Paper
                     elevation={8}
                     sx={{
@@ -731,7 +771,13 @@ export default function Page() {
                                 )
                               : committeedata
                             ).map((club_committee) => (
-                              <TableRow key={club_committee.committee_id}>
+                              <TableRow
+                                key={club_committee.committee_id}
+                                onClick={() =>
+                                  showcommitteeData(club_committee)
+                                }
+                                style={{ cursor: "pointer" }}
+                              >
                                 <TableCell sx={{ textAlign: "center" }}>
                                   {club_committee.committee_name}
                                 </TableCell>
@@ -770,16 +816,16 @@ export default function Page() {
                   </Paper>
                 </Grid>
               </Grid>
-
-              <Grid item xs={8}>
+              
+              <Grid item xs={7}>
                 <Paper
                   elevation={8}
                   sx={{
-                    width: "90%",
+                    width: "80%",
                     height: 75,
                     background: "#C9A66D",
                     borderRadius: "2px",
-                    ml: 5,
+                    ml: 15,
                   }}
                 >
                   <Typography
@@ -792,12 +838,12 @@ export default function Page() {
                 <Paper
                   elevation={8}
                   sx={{
-                    width: "90%",
+                    width: "80%",
                     background: "#FFF6E1",
                     borderRadius: "2px",
                     pb: 0.5,
                     pt: 0.5,
-                    ml: 5,
+                    ml: 15,
                   }}
                 >
                   {(rowsPerActpage > 0
@@ -812,7 +858,7 @@ export default function Page() {
                         component={Link}
                         to={`/activity/${activity.activity_id}`}
                         sx={{
-                          width: "90%",
+                          width: "87%",
                           color: "#222831",
                           fontSize: 20,
                           pb: 1.5,
@@ -846,7 +892,6 @@ export default function Page() {
                             activity.activity_name
                           )
                         }
-                        sx={{ ml: 0 }}
                       >
                         ลบ
                       </Button>
@@ -927,7 +972,13 @@ export default function Page() {
 
             <Grid
               container
-              sx={{ display: "flex", justifyContent: "center", mt: 5 }}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                mt: 5,
+                border: 10,
+                borderColor: "white",
+              }}
             >
               <Grid item>
                 <Button
@@ -1114,7 +1165,7 @@ export default function Page() {
                 </Grid>
               </Grid>
 
-              <Grid item xs={8}>
+              <Grid item xs={7}>
                 <Paper
                   elevation={8}
                   sx={{

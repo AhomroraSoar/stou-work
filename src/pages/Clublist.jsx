@@ -6,16 +6,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TablePagination,
-  TextField,
-} from "@mui/material";
+import { TablePagination } from "@mui/material";
 
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
@@ -364,12 +355,11 @@ export default function Page() {
                     >
                       <Typography sx={{ color: "#05383B", fontSize: 20 }}>
                         {club.club_name}
-                        <div style={{ display: "block" }}>
-                          <span style={{ color: "#4341d1" }}>
-                            จำนวนสมาชิก:{" "}
-                          </span>
-                          <span>{clubmemberCounts[club.club_id]} คน</span>
-                        </div>
+                        <Typography
+                          sx={{ display: "block", color: "#4341d1", fontSize:18 }}
+                        >
+                          จำนวนสมาชิก:{" "}{clubmemberCounts[club.club_id]} คน
+                        </Typography>
                       </Typography>
                     </Button>
                     <Button
@@ -489,12 +479,13 @@ export default function Page() {
                     key={club.club_id}
                   >
                     <Typography sx={{ color: "#05383B", fontSize: 20 }}>
-                      {club.club_name}
-                      <div style={{ display: "block" }}>
-                        <span style={{ color: "#4341d1" }}>จำนวนสมาชิก: </span>
-                        <span>{clubmemberCounts[club.club_id]} คน</span>
-                      </div>
-                    </Typography>
+                        {club.club_name}
+                        <Typography
+                          sx={{ display: "block", color: "#4341d1" }}
+                        >
+                          จำนวนสมาชิก:{" "}{clubmemberCounts[club.club_id]} คน
+                        </Typography>
+                      </Typography>
                   </Button>
                 ))}
                 <TablePagination
