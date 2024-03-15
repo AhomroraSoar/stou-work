@@ -12,13 +12,19 @@ import {
   TableRow,
   TablePagination,
   TextField,
+  Button,
 } from "@mui/material";
 
 import Appbar from "../assets/Appbar.jsx";
 
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
 import BigBackground from "../assets/img/BigBackground.png";
 
 import "../css/Teachersearch.css";
+
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
 
 export default function Teachersearch() {
   const [teacher, setTeacher] = useState([]);
@@ -53,12 +59,130 @@ export default function Teachersearch() {
     setPage(0);
   };
 
-  // Check if teacher is an array before filtering
   const filteredTeacher = Array.isArray(teacher)
-    ? teacher.filter((teacher) =>
-        teacher.advisor_name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+    ? teacher.filter((teacher) => {
+        const searchTermLower = searchTerm.toLowerCase();
+        return (
+          teacher.advisor_name.toLowerCase().includes(searchTermLower) ||
+          teacher.advisor_id.toLowerCase().includes(searchTermLower) ||
+          teacher.department.toLowerCase().includes(searchTermLower) ||
+          teacher.club_name.toLowerCase().includes(searchTermLower)
+        );
+      })
     : [];
+
+  const addAdvisor = async () => {
+    try {
+      const clublist = await fetch("http://localhost:4000/clublist");
+      const clublistData = await clublist.json();
+
+      const result = await withReactContent(Swal).fire({
+        title: <Typography>เพิ่มอาจารย์ที่ปรึกษา</Typography>,
+        html: `<input id="advisor_id" class="swal2-input" placeholder="รหัสประจำตัว">
+               <input id="advisor_name" class="swal2-input" placeholder="ชื่อ-สกุล">
+               <input id="department" class="swal2-input" placeholder="สาชาวิชา">
+               <input id="advisor_tel" class="swal2-input" placeholder="เบอร์โทรศัพท์">
+               <input id="line_contact" class="swal2-input" placeholder="Line ID">
+               <select id="club_id" class="swal2-select">
+                <option value="">--กรุณาเลือกชมรมที่เป็นที่ปรึกษา--</option> <!-- Empty option -->
+                 ${clublistData
+                   .map(
+                     (club) =>
+                       `<option value="${club.club_id}">${club.club_name}</option>`
+                   )
+                   .join("")}
+               </select>`,
+        confirmButtonText: "เพิ่ม",
+        cancelButtonText: "ยกเลิก",
+        showCancelButton: true,
+        allowOutsideClick: false,
+        preConfirm: () => {
+          const advisor_id = document.getElementById("advisor_id").value;
+          const advisor_name = document.getElementById("advisor_name").value;
+          const department = document.getElementById("department").value;
+          const advisor_tel = document.getElementById("advisor_tel").value;
+          const line_contact = document.getElementById("line_contact").value;
+          const club_id = document.getElementById("club_id").value;
+
+          if (
+            !advisor_id.trim() ||
+            !advisor_name.trim() ||
+            !department.trim() ||
+            !advisor_tel.trim() ||
+            !line_contact.trim() ||
+            !club_id.trim()
+          ) {
+            withReactContent(Swal).fire({
+              title: (
+                <Typography sx={{ fontSize: 20 }}>
+                  กรุณากรอกข้อมูลให้ครบถ้วน
+                </Typography>
+              ),
+              icon: "error",
+              showConfirmButton: false,
+              timer: 1200,
+            });
+            throw new Error("กรุณากรอกข้อมูลให้ครบถ้วน");
+          }
+
+          return {
+            advisor_id,
+            advisor_name,
+            department,
+            advisor_tel,
+            line_contact,
+            club_id,
+          };
+        },
+      });
+
+      if (result.dismiss === Swal.DismissReason.cancel) {
+        return;
+      }
+
+      const response = await fetch(`http://localhost:4000/advisorregister`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          advisor_id: result.value.advisor_id,
+          advisor_name: result.value.advisor_name,
+          department: result.value.department,
+          advisor_tel: result.value.advisor_tel,
+          line_contact: result.value.line_contact,
+          club_id: result.value.club_id,
+        }),
+      });
+
+      const responseData = await response.json();
+
+      if (response.ok) {
+        Swal.fire({
+          title: "เสร็จสิ้น",
+          text: responseData.message,
+          icon: "success",
+          showConfirmButton: false,
+          timer: 1000,
+        }).then(() => {
+          window.location.reload(); // Refresh the page upon success
+        });
+      } else {
+        Swal.fire({
+          title: "Error",
+          text: responseData.message || "Failed to add advisor",
+          icon: "error",
+        });
+      }
+    } catch (error) {
+      console.error("Error adding advisor:", error);
+      Swal.fire({
+        title: "Error",
+        text: error.message || "Failed to add advisor",
+        icon: "error",
+      });
+    }
+  };
 
   return (
     <Appbar>
@@ -77,7 +201,7 @@ export default function Teachersearch() {
           container
           sx={{
             pt: 5,
-            pb:5,
+            pb: 5,
             display: "flex",
             justifyContent: "center",
             alignContent: "center",
@@ -117,7 +241,7 @@ export default function Teachersearch() {
               sx={{ display: "flex", justifyContent: "center", mt: 3, mb: 3 }}
             >
               <TextField
-                label="กรุณาใส่ชื่ออาจารย์ที่ต้องการค้นหา"
+                label="กรุณากรอกข้อมูลอาจารย์ที่ต้องการค้นหา"
                 variant="filled"
                 type="search"
                 value={searchTerm}
@@ -207,6 +331,15 @@ export default function Teachersearch() {
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
               />
+              <Button
+                sx={{ width: "100%", pt: 1, pb: 1 }}
+                onClick={() => addAdvisor()}
+              >
+                <AddRoundedIcon style={{ color: "black" }} />
+                <Typography sx={{ color: "#05383B", fontSize: 16 }}>
+                  เพิ่มอาจารย์ที่ปรึกษา
+                </Typography>
+              </Button>
             </Grid>
           </Paper>
         </Grid>

@@ -124,23 +124,7 @@ export default function Layout({ children }) {
                 </Menu>
               </Box>
 
-              <Typography
-                variant="h5"
-                noWrap
-                component="a"
-                href="#app-bar-with-responsive-menu"
-                sx={{
-                  mr: 2,
-                  display: { xs: 'flex', md: 'none' },
-                  flexGrow: 1,
-                  fontFamily:'THSarabunNew',
-                  fontWeight: 700,
-                  color: '#004D1F',
-                  textDecoration: 'none',
-                }}
-              >
-                ระบบกิจการนักศึกษา
-              </Typography>
+              
               <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                 {pages.map((page) => (
                   <Button

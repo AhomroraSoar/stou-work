@@ -4,3 +4,6 @@
 .odd{
     background-color: #D5D5D5;
 }
+.swal2-select option {
+  font-size: "4px";
+}

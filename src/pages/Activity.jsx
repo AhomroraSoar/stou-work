@@ -587,9 +587,16 @@ export default function Page() {
               </Grid>
             </Grid>
 
-            <Grid container sx={{ mt: 5 }}>
-              <Grid container xs={5}  direction="row" alignItems="center" sx={{border:5}}>
-                <Grid item xs={12}  display="flex" alignItems="center">
+            <Grid container sx={{ mt: 3.5 }}>
+              <Grid
+                container
+                spacing={2}
+                xs={5}
+                direction="column"
+                justifyContent="flex-start"
+                alignItems="center"
+              >
+                <Grid item>
                   <Button
                     variant="contained"
                     color="success"
@@ -605,11 +612,11 @@ export default function Page() {
                   </Button>
                 </Grid>
 
-                <Grid item xs={12} >
+                <Grid item>
                   <Paper
                     elevation={8}
                     sx={{
-                      width: 450,
+                      width: 550,
                       height: 75,
                       background: "#C9A66D",
                       borderRadius: "2px",
@@ -626,7 +633,7 @@ export default function Page() {
                   <Paper
                     elevation={8}
                     sx={{
-                      width: 450,
+                      width: 550,
                       background: "#FFF6E1",
                       borderRadius: "2px",
                       textAlign: "center",
@@ -640,17 +647,29 @@ export default function Page() {
                           >
                             <TableRow>
                               <TableCell
-                                sx={{ textAlign: "center", color: "#ffffff" }}
+                                sx={{
+                                  textAlign: "center",
+                                  color: "#ffffff",
+                                  width: "20%",
+                                }}
                               >
                                 รหัสประจำตัว
                               </TableCell>
                               <TableCell
-                                sx={{ textAlign: "center", color: "#ffffff" }}
+                                sx={{
+                                  textAlign: "center",
+                                  color: "#ffffff",
+                                  width: "45%",
+                                }}
                               >
                                 ชื่อ - นามสกุล
                               </TableCell>
                               <TableCell
-                                sx={{ textAlign: "center", color: "#ffffff" }}
+                                sx={{
+                                  textAlign: "center",
+                                  color: "#ffffff",
+                                  width: "35%",
+                                }}
                               ></TableCell>
                             </TableRow>
                           </TableHead>
@@ -663,25 +682,28 @@ export default function Page() {
                                 )
                               : teacherdata
                             ).map((club_advisor) => (
-                              <TableRow
-                                key={club_advisor.advisor_id}
-                                onClick={() => showteacherData(club_advisor)}
-                                style={{ cursor: "pointer" }}
-                              >
-                                <TableCell sx={{ textAlign: "center" }}>
+                              <TableRow key={club_advisor.advisor_id}>
+                                <TableCell
+                                  onClick={() => showteacherData(club_advisor)}
+                                  style={{ cursor: "pointer" }}
+                                  sx={{ textAlign: "center" }}
+                                >
                                   {club_advisor.advisor_id}
                                 </TableCell>
-                                <TableCell sx={{ textAlign: "center" }}>
+                                <TableCell
+                                  onClick={() => showteacherData(club_advisor)}
+                                  style={{ cursor: "pointer" }}
+                                  sx={{ textAlign: "center" }}
+                                >
                                   {club_advisor.advisor_name}
                                 </TableCell>
-                                <TableCell
-                                  sx={{
-                                    justifyContent: "center",
-                                    display: "inline",
-                                  }}
-                                >
-                                  <Button>แก้ไข</Button>
-                                  <Button>ลบ</Button>
+                                <TableCell>
+                                  <Button variant="contained" sx={{ mr: 0.7 }}>
+                                    แก้ไข
+                                  </Button>
+                                  <Button variant="contained" color="error">
+                                    ลบ
+                                  </Button>
                                 </TableCell>
                               </TableRow>
                             ))}
@@ -717,11 +739,11 @@ export default function Page() {
                   </Paper>
                 </Grid>
 
-                <Grid item xs={12} >
+                <Grid item>
                   <Paper
                     elevation={8}
                     sx={{
-                      width: 450,
+                      width: 550,
                       height: 75,
                       background: "#C9A66D",
                       borderRadius: "2px",
@@ -738,13 +760,13 @@ export default function Page() {
                   <Paper
                     elevation={8}
                     sx={{
-                      width: 450,
+                      width: 550,
                       background: "#FFF6E1",
                       borderRadius: "2px",
                       textAlign: "center",
                     }}
                   >
-                    <Grid item xs={12} sx={{ width: "100%" }}>
+                    <Grid item xs={12} sx={{ width: "100%", mb: 5 }}>
                       <TableContainer>
                         <Table>
                           <TableHead
@@ -752,15 +774,30 @@ export default function Page() {
                           >
                             <TableRow>
                               <TableCell
-                                sx={{ textAlign: "center", color: "#ffffff" }}
+                                sx={{
+                                  textAlign: "center",
+                                  color: "#ffffff",
+                                  width: "35%",
+                                }}
                               >
                                 ชื่อ - นามสกุล
                               </TableCell>
                               <TableCell
-                                sx={{ textAlign: "center", color: "#ffffff" }}
+                                sx={{
+                                  textAlign: "center",
+                                  color: "#ffffff",
+                                  width: "28%",
+                                }}
                               >
                                 ตำแหน่ง
                               </TableCell>
+                              <TableCell
+                                sx={{
+                                  textAlign: "center",
+                                  color: "#ffffff",
+                                  width: "30%",
+                                }}
+                              ></TableCell>
                             </TableRow>
                           </TableHead>
                           <TableBody>
@@ -771,18 +808,32 @@ export default function Page() {
                                 )
                               : committeedata
                             ).map((club_committee) => (
-                              <TableRow
-                                key={club_committee.committee_id}
-                                onClick={() =>
-                                  showcommitteeData(club_committee)
-                                }
-                                style={{ cursor: "pointer" }}
-                              >
-                                <TableCell sx={{ textAlign: "center" }}>
+                              <TableRow key={club_committee.committee_id}>
+                                <TableCell
+                                  onClick={() =>
+                                    showcommitteeData(club_committee)
+                                  }
+                                  style={{ cursor: "pointer" }}
+                                  sx={{ textAlign: "center" }}
+                                >
                                   {club_committee.committee_name}
                                 </TableCell>
-                                <TableCell sx={{ textAlign: "center" }}>
+                                <TableCell
+                                  onClick={() =>
+                                    showcommitteeData(club_committee)
+                                  }
+                                  style={{ cursor: "pointer" }}
+                                  sx={{ textAlign: "center" }}
+                                >
                                   {club_committee.committee_role_name}
+                                </TableCell>
+                                <TableCell>
+                                  <Button variant="contained" sx={{ mr: 0.7 }}>
+                                    แก้ไข
+                                  </Button>
+                                  <Button variant="contained" color="error">
+                                    ลบ
+                                  </Button>
                                 </TableCell>
                               </TableRow>
                             ))}
@@ -816,16 +867,15 @@ export default function Page() {
                   </Paper>
                 </Grid>
               </Grid>
-              
+
               <Grid item xs={7}>
                 <Paper
                   elevation={8}
                   sx={{
-                    width: "80%",
+                    width: "90%",
                     height: 75,
                     background: "#C9A66D",
                     borderRadius: "2px",
-                    ml: 15,
                   }}
                 >
                   <Typography
@@ -838,12 +888,11 @@ export default function Page() {
                 <Paper
                   elevation={8}
                   sx={{
-                    width: "80%",
+                    width: "90%",
                     background: "#FFF6E1",
                     borderRadius: "2px",
                     pb: 0.5,
                     pt: 0.5,
-                    ml: 15,
                   }}
                 >
                   {(rowsPerActpage > 0
@@ -976,8 +1025,6 @@ export default function Page() {
                 display: "flex",
                 justifyContent: "center",
                 mt: 5,
-                border: 10,
-                borderColor: "white",
               }}
             >
               <Grid item>
@@ -1051,10 +1098,18 @@ export default function Page() {
                               : teacherdata
                             ).map((club_advisor) => (
                               <TableRow key={club_advisor.advisor_id}>
-                                <TableCell sx={{ textAlign: "center" }}>
+                                <TableCell
+                                  onClick={() => showteacherData(club_advisor)}
+                                  style={{ cursor: "pointer" }}
+                                  sx={{ textAlign: "center" }}
+                                >
                                   {club_advisor.advisor_id}
                                 </TableCell>
-                                <TableCell sx={{ textAlign: "center" }}>
+                                <TableCell
+                                  onClick={() => showteacherData(club_advisor)}
+                                  style={{ cursor: "pointer" }}
+                                  sx={{ textAlign: "center" }}
+                                >
                                   {club_advisor.advisor_name}
                                 </TableCell>
                               </TableRow>
@@ -1135,10 +1190,22 @@ export default function Page() {
                               : committeedata
                             ).map((club_committee) => (
                               <TableRow key={club_committee.committee_id}>
-                                <TableCell sx={{ textAlign: "center" }}>
+                                <TableCell
+                                  onClick={() =>
+                                    showcommitteeData(club_committee)
+                                  }
+                                  style={{ cursor: "pointer" }}
+                                  sx={{ textAlign: "center" }}
+                                >
                                   {club_committee.committee_name}
                                 </TableCell>
-                                <TableCell sx={{ textAlign: "center" }}>
+                                <TableCell
+                                  onClick={() =>
+                                    showcommitteeData(club_committee)
+                                  }
+                                  style={{ cursor: "pointer" }}
+                                  sx={{ textAlign: "center" }}
+                                >
                                   {club_committee.committee_role_name}
                                 </TableCell>
                               </TableRow>

@@ -153,7 +153,7 @@ export default function SignInSide() {
                 justifyContent="center"
                 alignItems="center"
               >
-                <Grid item>
+                <Grid item sx={{width:"75%"}}>
                   <TextField
                     margin="normal"
                     required
@@ -163,7 +163,7 @@ export default function SignInSide() {
                     autoComplete="username"
                     variant="outlined"
                     autoFocus
-                    sx={{ mb: 3, width: 500 }}
+                    sx={{ mb: 3,width:"100%" }}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -173,7 +173,7 @@ export default function SignInSide() {
                     }}
                   />
                 </Grid>
-                <Grid item>
+                <Grid item sx={{width:"75%"}}>
                   <TextField
                     margin="normal"
                     required
@@ -184,7 +184,7 @@ export default function SignInSide() {
                     value={values.password}
                     id="password"
                     autoComplete="current-password"
-                    sx={{ width: 500 }}
+                    sx={{ width: "100%" }}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -224,7 +224,7 @@ export default function SignInSide() {
                 <Grid container>
                   <Grid item xs>
                     <Typography align="center" sx={{ my: 1 }}>
-                      ━━━━━━━━━━ OR ━━━━━━━━━━{" "}
+                      ━━━━━━━━ OR ━━━━━━━━{" "}
                     </Typography>
                   </Grid>
                 </Grid>
