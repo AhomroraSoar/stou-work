@@ -78,7 +78,7 @@ export default function Page() {
       const result = await withReactContent(Swal).fire({
         title: <Typography>เพิ่มชมรม</Typography>,
         input: "text",
-        inputValue: "ชมรม ",
+        inputValue: "ชมรมนักศึกษาศูนย์วิทยบริการและชุมชนสัมพันธ์ ",
         confirmButtonText: "เพิ่ม",
         cancelButtonText: "ยกเลิก",
         showCancelButton: true,

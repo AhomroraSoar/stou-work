@@ -916,8 +916,19 @@ export default function Page() {
                         key={activity.activity_id}
                       >
                         <Typography sx={{ fontSize: 20 }}>
-                          <span style={{ color: "#4341d1" }}>ชื่อกิจกรรม </span>
-                          {activity.activity_name}
+                          <span style={{ color: "#4341d1" }}>ชื่อกิจกรรม: </span>
+                          <span
+                            style={{
+                              maxWidth: "440px",
+                              wordWrap: "break-word",
+                              display: "inline-block",
+                              verticalAlign: "top", 
+                            }}
+                          >
+                            {activity.activity_name}
+                          </span>
+
+                          <br />
                           <span style={{ color: "#4341d1" }}>
                             {" "}
                             จำนวนผู้เข้าร่วม:{" "}

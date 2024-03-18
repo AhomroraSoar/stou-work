@@ -20,8 +20,9 @@ import AddRoundedIcon from "@mui/icons-material/AddRounded";
 
 export default function Page() {
   const [data, setData] = useState([]);
+  const initialRowsPerPage = parseInt(localStorage.getItem('rowsPerPage') || 7, 10);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(7);
+  const [rowsPerPage, setRowsPerPage] = useState(initialRowsPerPage);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,7 +49,7 @@ export default function Page() {
           <Typography>เพิ่มรายชื่อศูนย์วิทยบริการและชุมชนสัมพันธ์</Typography>
         ),
         input: "text",
-        inputValue: "ศูนย์วิทยาบริการและชุมชนสัมพันธ์ มสธ. ",
+        inputValue: "ศูนย์วิทยาบริการและชุมชนสัมพันธ์ มสธ.",
         confirmButtonText: "เพิ่ม",
         cancelButtonText: "ยกเลิก",
         showCancelButton: true,
@@ -233,6 +234,10 @@ export default function Page() {
         }
       });
   };
+
+  useEffect(() => {
+    localStorage.setItem('rowsPerPage', rowsPerPage);
+  }, [rowsPerPage]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

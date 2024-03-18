@@ -261,7 +261,7 @@ export default function Page() {
         text: "File uploaded successfully",
       }).then((result) => {
         if (result.isConfirmed || result.isDismissed) {
-          window.location.reload(); // Refresh the page
+          window.location.reload();
         }
       });
     } catch (error) {
@@ -276,11 +276,7 @@ export default function Page() {
   const IMGdelete = (img_id) => {
     withReactContent(Swal)
       .fire({
-        title: (
-          <Typography variant="h6">
-            ยืนยันว่าจะลบรูปภาพนี้ ?
-          </Typography>
-        ),
+        title: <Typography variant="h6">ยืนยันว่าจะลบรูปภาพนี้ ?</Typography>,
         html: (
           <div>
             <span style={{ color: "red" }}>
@@ -305,7 +301,7 @@ export default function Page() {
           })
             .then((res) => {
               if (!res.ok) {
-                throw new Error('Failed to delete image');
+                throw new Error("Failed to delete image");
               }
               return res.json();
             })
@@ -333,7 +329,6 @@ export default function Page() {
         }
       });
   };
-  
 
   const handleCancel = () => {
     setFile(null);
@@ -370,7 +365,11 @@ export default function Page() {
               >
                 <Paper
                   elevation={8}
-                  sx={{ background: "#C9A66D", borderRadius: "5px" }}
+                  sx={{
+                    background: "#C9A66D",
+                    borderRadius: "5px",
+                    maxWidth: 1400,
+                  }}
                 >
                   <Typography
                     sx={{
@@ -380,6 +379,7 @@ export default function Page() {
                       pr: 10,
                       pt: 1.5,
                       pb: 1.5,
+                      wordWrap: "break-word",
                     }}
                   >
                     กิจกรรม {data.length > 0 && `${data[0].activity_name}`}
@@ -429,10 +429,19 @@ export default function Page() {
                             key={activity.activity_id}
                           >
                             <span style={{ color: "#4341d1" }}>
-                              ชื่อกิจกรรม{" "}
+                              ชื่อกิจกรรม:
                             </span>
-                            {activity.activity_name}
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <span
+                              style={{
+                                maxWidth: "450px",
+                                wordWrap: "break-word",
+                                display: "inline-block",
+                                verticalAlign: "top",
+                              }}
+                            >
+                              {activity.activity_name}
+                            </span>
+                            <br />
                             <span style={{ color: "#4341d1" }}>
                               จำนวนผู้เข้าร่วม{" "}
                             </span>
@@ -492,21 +501,36 @@ export default function Page() {
                 </Button>
               </Grid>
 
-              <Grid item xs={7}>
+              <Grid item xs={7} >
                 <Paper
                   elevation={8}
                   sx={{
                     width: "90%",
-                    height: 75,
                     background: "#C9A66D",
                     borderRadius: "2px",
                     ml: 5,
                   }}
                 >
                   <Typography
-                    sx={{ fontSize: 20, textAlign: "center", pt: 2.25 }}
+                    sx={{
+                      fontSize: 20,
+                      textAlign: "center",
+                      pt: 2.25,
+                      wordWrap: "break-word",
+                    }}
                   >
                     รายชื่อผู้เข้าร่วมกิจกรรม
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontSize: 20,
+                      textAlign: "center",
+                      wordWrap: "break-word",
+                      pb:2,
+                      pl:2,
+                      pr:2
+                    }}
+                  >
                     {data.length > 0 && `${data[0].activity_name}`}
                   </Typography>
                 </Paper>
@@ -552,10 +576,14 @@ export default function Page() {
                               key={user.user_id}
                               className={index % 2 === 0 ? "even" : "odd"}
                             >
-                              <TableCell sx={{ textAlign: "center",width:'50%' }}>
+                              <TableCell
+                                sx={{ textAlign: "center", width: "50%" }}
+                              >
                                 {user.user_id}
                               </TableCell>
-                              <TableCell sx={{ textAlign: "center",width:'50%' }}>
+                              <TableCell
+                                sx={{ textAlign: "center", width: "50%" }}
+                              >
                                 {user.user_name}
                               </TableCell>
                             </TableRow>

@@ -12,6 +12,7 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { useParams } from "react-router-dom";
 import Autocomplete from "@mui/material/Autocomplete";
 import thLocale from "dayjs/locale/th";
+import dayjs from "dayjs";
 
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
@@ -23,9 +24,16 @@ export default function ActivityUpdate() {
   const { activity_id } = useParams();
   const [activityTypes, setActivityTypes] = useState([]);
   const [activityData, setActivityData] = useState(null);
+  const [activity_name, setActivity_name] = useState("");
+  const [location, setLocation] = useState("");
+  const [province, setProvince] = useState("");
+  const [start_date, setStart_date] = useState("");
+  const [finish_date, setFinish_date] = useState("");
+  const [facebook_contact, setFacebook_contact] = useState("");
+  const [line_contact, setLine_contact] = useState("");
+  const [activity_type_id, setActivity_type_id] = useState("");
 
   useEffect(() => {
-    // Function to fetch activity details
     const fetchActivityDetails = async () => {
       try {
         const response = await fetch(
@@ -35,13 +43,12 @@ export default function ActivityUpdate() {
           throw new Error("Failed to fetch activity details");
         }
         const data = await response.json();
-        setActivityData(data[0]); // Set the fetched activity data
+        setActivityData(data[0]);
       } catch (error) {
         console.error("Error fetching activity details:", error);
       }
     };
 
-    // Call the fetchActivityDetails function
     fetchActivityDetails();
   }, [activity_id]);
 
@@ -50,8 +57,8 @@ export default function ActivityUpdate() {
       setActivity_name(activityData.activity_name);
       setLocation(activityData.location);
       setProvince(activityData.province);
-      // setStart_date(activityData.start_date);
-      // setFinish_date(activityData.finish_date);
+      setStart_date(dayjs(activityData.start_date));
+      setFinish_date(dayjs(activityData.finish_date));
       setFacebook_contact(activityData.facebook_contact);
       setLine_contact(activityData.line_contact);
       setActivity_type_id(activityData.activity_type_id);
@@ -143,15 +150,6 @@ export default function ActivityUpdate() {
     }
   };
 
-  const [activity_name, setActivity_name] = useState("");
-  const [location, setLocation] = useState("");
-  const [province, setProvince] = useState("");
-  const [start_date, setStart_date] = useState("");
-  const [finish_date, setFinish_date] = useState("");
-  const [facebook_contact, setFacebook_contact] = useState("");
-  const [line_contact, setLine_contact] = useState("");
-  const [activity_type_id, setActivity_type_id] = useState("");
-
   const theme = createTheme({
     palette: {
       primary: {
@@ -212,7 +210,7 @@ export default function ActivityUpdate() {
                     required
                     id="activity_name"
                     label="ชื่อกิจกรรม"
-                    value={activityData ? activityData.activity_name : ""}
+                    value={activity_name}
                     sx={{ width: 490 }}
                     onChange={(e) => setActivity_name(e.target.value)}
                   />
@@ -224,7 +222,7 @@ export default function ActivityUpdate() {
                     required
                     id="location"
                     label="สถานที่"
-                    value={activityData ? activityData.location : ""}
+                    value={location}
                     sx={{ width: 490 }}
                     onChange={(e) => setLocation(e.target.value)}
                   />
@@ -236,7 +234,7 @@ export default function ActivityUpdate() {
                     required
                     id="province"
                     label="จังหวัด"
-                    value={activityData ? activityData.province : ""}
+                    value={province}
                     sx={{ width: 490 }}
                     onChange={(e) => setProvince(e.target.value)}
                   />
@@ -305,7 +303,7 @@ export default function ActivityUpdate() {
                     required
                     id="facebook_contact"
                     label="Facebook Page"
-                    value={activityData ? activityData.facebook_contact : ""}
+                    value={facebook_contact}
                     sx={{ width: 490 }}
                     onChange={(e) => setFacebook_contact(e.target.value)}
                   />
@@ -317,7 +315,7 @@ export default function ActivityUpdate() {
                     required
                     id="line_contact"
                     label="LineID"
-                    value={activityData ? activityData.line_contact : ""}
+                    value={line_contact}
                     sx={{ width: 490 }}
                     onChange={(e) => setLine_contact(e.target.value)}
                   />
@@ -327,16 +325,16 @@ export default function ActivityUpdate() {
                   <Autocomplete
                     sx={{ width: 500 }}
                     options={activityTypes}
-                    getOptionLabel={(option) => option.activity_type_name || ""} // Handle empty value
+                    getOptionLabel={(option) => option.activity_type_name || ""}
                     value={
                       activityTypes.find(
                         (option) => option.activity_type_id === activity_type_id
                       ) || null
-                    } // Ensure value matches an option
+                    } 
                     onChange={(event, newValue) => {
                       setActivity_type_id(
                         newValue ? newValue.activity_type_id : ""
-                      ); // Set the selected activity type ID
+                      ); 
                     }}
                     renderInput={(params) => (
                       <TextField
@@ -352,7 +350,7 @@ export default function ActivityUpdate() {
                   <Button
                     type="submit"
                     variant="contained"
-                    color="success"
+                    color="primary"
                     sx={{ width: 150, height: 40, mr: 8 }}
                   >
                     ยืนยัน
@@ -360,7 +358,7 @@ export default function ActivityUpdate() {
                   <Button
                     variant="contained"
                     href={`/activity/${activity_id}`}
-                    color="error"
+                    color="primary"
                     sx={{ width: 150, height: 40 }}
                   >
                     ยกเลิก
