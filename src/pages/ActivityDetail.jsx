@@ -339,7 +339,7 @@ export default function Page() {
     window.open(imageUrl, "_blank");
   };
 
-  const role = JSON.parse(localStorage.getItem("user"));
+  const role = JSON.parse(localStorage.getItem("userData"));
 
   if (role.role_id === 3) {
     return (

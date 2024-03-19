@@ -1,34 +1,54 @@
-import React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import LogoutIcon from '@mui/icons-material/Logout';
-import { Link } from 'react-router-dom';
-import Logo from '../assets/img/logo-th.png'
+import React, { useEffect, useState } from "react";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import Menu from "@mui/material/Menu";
+import MenuIcon from "@mui/icons-material/Menu";
+import Container from "@mui/material/Container";
+import Button from "@mui/material/Button";
+import Tooltip from "@mui/material/Tooltip";
+import MenuItem from "@mui/material/MenuItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { Link } from "react-router-dom";
+import Logo from "../assets/img/logo-th.png";
 
 import Swal from "sweetalert2";
 
-const pages = ['ค้นหารายชื่ออาจารย์ที่ปรึกษา'];
+import CryptoJS from "crypto-js";
+
+const pages = ["ค้นหารายชื่ออาจารย์ที่ปรึกษา"];
 
 export default function Layout({ children }) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [userData, setUserData] = useState(null);
+  const encryptionKey = "STOUstudentclubDevbyAhomrora(userDataencrypt)";
 
-  const user = JSON.parse(localStorage.getItem("user"));
+  useEffect(() => {
+    const encryptedUserData = localStorage.getItem("userData");
+    console.log("Encrypted userData:", encryptedUserData);
+
+    if (encryptedUserData) {
+      const bytes = CryptoJS.AES.decrypt(encryptedUserData, encryptionKey);
+      console.log("Decrypted bytes:", bytes);
+      try {
+        const decryptedUserData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+        console.log("Decrypted userData:", decryptedUserData);
+        setUserData(decryptedUserData);
+      } catch (error) {
+        console.error("Error parsing decrypted data:", error);
+      }
+    }
+  }, [userData]);
+  console.log("userData:", userData);
 
   const handleLogout = (event) => {
     event.preventDefault();
     localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    localStorage.removeItem("userData");
 
     Swal.fire({
       icon: "success",
@@ -62,29 +82,37 @@ export default function Layout({ children }) {
 
   return (
     <>
-      <Box sx={{ flexGrow: 1, color: '#C9A66D' }}>
-        <AppBar position="static" sx={{ bgcolor: '#C9A66D' }}>
+      <Box sx={{ flexGrow: 1, color: "#C9A66D" }}>
+        <AppBar position="static" sx={{ bgcolor: "#C9A66D" }}>
           <Container maxWidth="xl">
             <Toolbar disableGutters>
-            <a href="http://localhost:3000/swnlist" style={{ textDecoration: 'none',display:'flex', justifyContent:'center', alignContent:'center',alignItems:'center' }}>
-              <img src={Logo} style={{ width: 50, marginRight: 2 }} />
-              <Typography
-                variant="h6"
-                noWrap
-                component="span"
-                sx={{
-                  mr: 2,
-                  fontFamily: 'THsarabun',
-                  fontWeight: 700,
-                  color: '#004D1F',
+              <a
+                href="http://localhost:3000/swnlist"
+                style={{
+                  textDecoration: "none",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignContent: "center",
+                  alignItems: "center",
                 }}
               >
-                ระบบกิจการนักศึกษา
-              </Typography>
-            </a>
+                <img src={Logo} style={{ width: 50, marginRight: 2 }} />
+                <Typography
+                  variant="h6"
+                  noWrap
+                  component="span"
+                  sx={{
+                    mr: 2,
+                    fontFamily: "THsarabun",
+                    fontWeight: 700,
+                    color: "#004D1F",
+                  }}
+                >
+                  ระบบกิจการนักศึกษา
+                </Typography>
+              </a>
 
-
-              <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+              <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
                 <IconButton
                   size="large"
                   aria-label="account of current user"
@@ -99,24 +127,24 @@ export default function Layout({ children }) {
                   id="menu-appbar"
                   anchorEl={anchorElNav}
                   anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
+                    vertical: "bottom",
+                    horizontal: "left",
                   }}
                   keepMounted
                   transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'left',
+                    vertical: "top",
+                    horizontal: "left",
                   }}
                   open={Boolean(anchorElNav)}
                   onClose={handleCloseNavMenu}
                   sx={{
-                    display: { xs: 'block', md: 'none' },
-                    color: '#004D1F',
+                    display: { xs: "block", md: "none" },
+                    color: "#004D1F",
                   }}
                 >
                   {pages.map((page) => (
                     <MenuItem key={page} onClick={handleCloseNavMenu}>
-                      <Typography textAlign="center" sx={{ color: '#004D1F' }}>
+                      <Typography textAlign="center" sx={{ color: "#004D1F" }}>
                         {page}
                       </Typography>
                     </MenuItem>
@@ -124,14 +152,14 @@ export default function Layout({ children }) {
                 </Menu>
               </Box>
 
-              
-              <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+              <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
                 {pages.map((page) => (
                   <Button
                     key={page}
                     onClick={handleCloseNavMenu}
-                    component={Link} to={'http://localhost:3000/teachersearch'}
-                    sx={{ my: 2, color: '#004D1F', display: 'block' }}
+                    component={Link}
+                    to={"http://localhost:3000/teachersearch"}
+                    sx={{ my: 2, color: "#004D1F", display: "block" }}
                   >
                     {page}
                   </Button>
@@ -141,7 +169,7 @@ export default function Layout({ children }) {
               <Box sx={{ flexGrow: 0 }}>
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Typography
+                    <Typography
                       sx={{
                         mr: 2,
                         color: "white",
@@ -149,22 +177,22 @@ export default function Layout({ children }) {
                         fontSize: "24px",
                       }}
                     >
-                      {user.user_name}
+                      {userData}
                     </Typography>
                   </IconButton>
                 </Tooltip>
                 <Menu
-                  sx={{ mt: '45px' }}
+                  sx={{ mt: "45px" }}
                   id="menu-appbar"
                   anchorEl={anchorElUser}
                   anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
+                    vertical: "top",
+                    horizontal: "right",
                   }}
                   keepMounted
                   transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
+                    vertical: "top",
+                    horizontal: "right",
                   }}
                   open={Boolean(anchorElUser)}
                   onClose={handleCloseUserMenu}

@@ -21,8 +21,8 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 //image import
-import LoginBackground from "../assets/img/login-background.png"
-import STOULogowithLabel from "../assets/img/STOU-logo-with-label.png"
+import LoginBackground from "../assets/img/login-background.png";
+import STOULogowithLabel from "../assets/img/STOU-logo-with-label.png";
 
 const defaultTheme = createTheme();
 
@@ -31,12 +31,12 @@ export default function SignInSide() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const jsonData = {
-      email: data.get("email"),
+      username: data.get("username"),
       password: data.get("password"),
       rememberme: false,
     };
 
-    fetch("http://localhost:4000/login", {
+    fetch("http://localhost:4000/loginAD", {
       method: "POST",
       headers: {
         Accept: "application/form-data",
@@ -58,21 +58,10 @@ export default function SignInSide() {
             timerProgressBar: true,
           });
           localStorage.setItem("token", data.token);
-          localStorage.setItem("user", JSON.stringify(data.user));
+          localStorage.setItem("userData", JSON.stringify(data.userData));
           window.setTimeout(function () {
             window.location.href = "/swnlist";
           }, 1500);
-        } else if (data["status"] === "Invalid password") {
-          Swal.fire({
-            icon: "error",
-            title: "เข้าสู่ระบบผิดพลาด",
-            text: data["message"],
-            toast: true,
-            position: "top-end",
-            showConfirmButton: false,
-            timer: 2000,
-            timerProgressBar: true,
-          });
         } else if (data["status"] === "error") {
           Swal.fire({
             icon: "error",
@@ -105,10 +94,14 @@ export default function SignInSide() {
   const handlePasswordChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
   };
-  
+
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Grid container component="main" sx={{ height: '100vh', display: 'flex', justifyContent: 'center' }}>
+      <Grid
+        container
+        component="main"
+        sx={{ height: "100vh", display: "flex", justifyContent: "center" }}
+      >
         <CssBaseline />
         <Grid
           item
@@ -116,20 +109,32 @@ export default function SignInSide() {
           md={7}
           sx={{
             backgroundImage: `url(${LoginBackground})`,
-            backgroundRepeat: 'no-repeat',
-            backgroundColor: (t) => (t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900]),
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
+            backgroundRepeat: "no-repeat",
+            backgroundColor: (t) =>
+              t.palette.mode === "light"
+                ? t.palette.grey[50]
+                : t.palette.grey[900],
+            backgroundSize: "cover",
+            backgroundPosition: "center",
           }}
         />
-        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square sx={{pt: 3 }}>
+        <Grid
+          item
+          xs={12}
+          sm={8}
+          md={5}
+          component={Paper}
+          elevation={6}
+          square
+          sx={{ pt: 3 }}
+        >
           <Box
             sx={{
               my: 8,
               mx: 4,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
               border: 0,
             }}
           >
@@ -153,17 +158,17 @@ export default function SignInSide() {
                 justifyContent="center"
                 alignItems="center"
               >
-                <Grid item sx={{width:"75%"}}>
+                <Grid item sx={{ width: "75%" }}>
                   <TextField
                     margin="normal"
                     required
-                    name="email"
+                    name="username"
                     type="username"
-                    label="Email address"
+                    label="username"
                     autoComplete="username"
                     variant="outlined"
                     autoFocus
-                    sx={{ mb: 3,width:"100%" }}
+                    sx={{ mb: 3, width: "100%" }}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -173,7 +178,7 @@ export default function SignInSide() {
                     }}
                   />
                 </Grid>
-                <Grid item sx={{width:"75%"}}>
+                <Grid item sx={{ width: "75%" }}>
                   <TextField
                     margin="normal"
                     required
@@ -228,8 +233,13 @@ export default function SignInSide() {
                     </Typography>
                   </Grid>
                 </Grid>
-                <Grid container sx={{display:'flex',justifyContent:'center'}}>
-                <Box sx={{justifyContent:'center',display:'flex',mr:10 }}>
+                <Grid
+                  container
+                  sx={{ display: "flex", justifyContent: "center" }}
+                >
+                  <Box
+                    sx={{ justifyContent: "center", display: "flex", mr: 10 }}
+                  >
                     <Link
                       href="/reset-password"
                       fontSize="36"
@@ -237,8 +247,8 @@ export default function SignInSide() {
                     >
                       ลืมรหัสผ่าน
                     </Link>
-                </Box>
-                <Box sx={{ justifyContent:'center',display:'flex' }}>
+                  </Box>
+                  <Box sx={{ justifyContent: "center", display: "flex" }}>
                     <Link
                       href="/Register"
                       fontSize="36"
@@ -246,7 +256,7 @@ export default function SignInSide() {
                     >
                       ลงทะเบียน
                     </Link>
-                </Box>
+                  </Box>
                 </Grid>
               </Grid>
             </Box>
