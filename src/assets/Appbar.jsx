@@ -17,33 +17,13 @@ import Logo from "../assets/img/logo-th.png";
 
 import Swal from "sweetalert2";
 
-import CryptoJS from "crypto-js";
-
 const pages = ["ค้นหารายชื่ออาจารย์ที่ปรึกษา"];
 
 export default function Layout({ children }) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const [userData, setUserData] = useState(null);
-  const encryptionKey = "STOUstudentclubDevbyAhomrora(userDataencrypt)";
 
-  useEffect(() => {
-    const encryptedUserData = localStorage.getItem("userData");
-    console.log("Encrypted userData:", encryptedUserData);
-
-    if (encryptedUserData) {
-      const bytes = CryptoJS.AES.decrypt(encryptedUserData, encryptionKey);
-      console.log("Decrypted bytes:", bytes);
-      try {
-        const decryptedUserData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-        console.log("Decrypted userData:", decryptedUserData);
-        setUserData(decryptedUserData);
-      } catch (error) {
-        console.error("Error parsing decrypted data:", error);
-      }
-    }
-  }, [userData]);
-  console.log("userData:", userData);
+  const userData = JSON.parse(localStorage.getItem("userData"));
 
   const handleLogout = (event) => {
     event.preventDefault();
@@ -177,7 +157,7 @@ export default function Layout({ children }) {
                         fontSize: "24px",
                       }}
                     >
-                      {userData}
+                      {userData.name}
                     </Typography>
                   </IconButton>
                 </Tooltip>

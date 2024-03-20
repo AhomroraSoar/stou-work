@@ -584,7 +584,7 @@ export default function Page() {
                               <TableCell
                                 sx={{ textAlign: "center", width: "50%" }}
                               >
-                                {user.user_name}
+                                {user.name}
                               </TableCell>
                             </TableRow>
                           ))}
@@ -941,7 +941,7 @@ export default function Page() {
                               <TableCell
                                 sx={{ textAlign: "center", width: "50%" }}
                               >
-                                {user.user_name}
+                                {user.name}
                               </TableCell>
                             </TableRow>
                           ))}

@@ -27,7 +27,7 @@ export default function UserCreate() {
 
     var data = {
       user_id: user_id,
-      user_name: user_name,
+      name: name,
       user_age: parseInt(user_age),
       user_career: user_career,
       user_address: user_address,
@@ -76,7 +76,7 @@ export default function UserCreate() {
   };
 
   const [user_id, setUser_id] = useState("");
-  const [user_name, setUser_name] = useState("");
+  const [name, setName] = useState("");
   const [user_age, setUser_age] = useState("");
   const [user_career, setUser_career] = useState("");
   const [department, setDepartment] = useState("");
@@ -141,7 +141,7 @@ export default function UserCreate() {
   password.length > 0 && (password.length < 8 ) ||
   user_id.length !== 13 ||
   user_tel.length !== 10 ||
-  [user_id, user_name, user_age, user_career, department, program, user_address, email, password, user_tel].some(field => field.trim() === "");
+  [user_id, name, user_age, user_career, department, program, user_address, email, password, user_tel].some(field => field.trim() === "");
 
 
 
@@ -228,10 +228,10 @@ export default function UserCreate() {
                   <TextField
                     variant="outlined"
                     required
-                    id="user_name"
+                    id="name"
                     label="ชื่อ-นามสกุล"
                     sx={{ width: 490 }}
-                    onChange={(e) => setUser_name(e.target.value)}
+                    onChange={(e) => setName(e.target.value)}
                   />
                 </Grid>
 
