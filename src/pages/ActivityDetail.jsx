@@ -120,65 +120,79 @@ export default function Page() {
 
   const handleRegisterClick = async () => {
     try {
-      const userData = JSON.parse(localStorage.getItem("user"));
+        const userData = JSON.parse(localStorage.getItem("userData"));
 
-      if (!userData || !userData.user_id) {
-        throw new Error("User data or user ID not found in local storage");
-      }
-
-      const userId = userData.user_id;
-
-      const swalResult = await Swal.fire({
-        title: "ยืนยัน",
-        text: `ยืนยันที่จะลงทะเบียนเข้าร่วม ${
-          data.length > 0 ? data[0].activity_name : ""
-        }`,
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonText: "ตกลง",
-        cancelButtonText: "ยกเลิก",
-      });
-
-      if (swalResult.isConfirmed) {
-        const response = await fetch(
-          `http://localhost:4000/activity/${activity_id}/register`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              user: JSON.stringify({ user_id: userId }),
-            },
-          }
-        );
-
-        const result = await response.json();
-
-        console.log("Result status:", result.status);
-
-        if (result.status === "ok") {
-          console.log("Inside error block");
-          Swal.fire({
-            icon: "success",
-            title: "ลงทะเบียนเรียบร้อย",
-            text: result.message,
-            showConfirmButton: false,
-            timerProgressBar: false,
-          });
-        } else if (result.status === "registered") {
-          console.log("Inside error block");
-          Swal.fire({
-            icon: "error",
-            title: "ไม่สามารถลงทะเบียนได้",
-            text: result.message,
-            showConfirmButton: false,
-            timerProgressBar: false,
-          });
+        if (!userData || !userData.user_id) {
+            throw new Error("User data or user ID not found in local storage");
         }
-      }
+
+        const userId = userData.user_id;
+
+        const swalResult = await Swal.fire({
+            title: "ยืนยัน",
+            text: `ยืนยันที่จะลงทะเบียนเข้าร่วม ${
+                data.length > 0 ? data[0].activity_name : ""
+            }`,
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "ตกลง",
+            cancelButtonText: "ยกเลิก",
+        });
+
+        if (swalResult.isConfirmed) {
+            const response = await fetch(
+                `http://localhost:4000/activity/${activity_id}/register`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        user: JSON.stringify({ user_id: userId }),
+                    },
+                }
+            );
+
+            const result = await response.json();
+
+            console.log("Result status:", result.status);
+
+            if (result.status === "ok") {
+                Swal.fire({
+                    icon: "success",
+                    title: "ลงทะเบียนเรียบร้อย",
+                    text: result.message,
+                    showConfirmButton: false,
+                    timerProgressBar: false,
+                });
+            } else if (result.status === "registered") {
+                Swal.fire({
+                    icon: "error",
+                    title: "ไม่สามารถลงทะเบียนได้",
+                    text: result.message,
+                    showConfirmButton: false,
+                    timerProgressBar: false,
+                });
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "An unexpected error occurred",
+                    showConfirmButton: false,
+                    timerProgressBar: false,
+                });
+            }
+        }
     } catch (error) {
-      console.error("Error registering user to the club:", error);
+        console.error("Error registering user to the club:", error);
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "An unexpected error occurred",
+            showConfirmButton: false,
+            timerProgressBar: false,
+        });
     }
-  };
+};
+
 
   useEffect(() => {
     const fetchImages = async () => {
