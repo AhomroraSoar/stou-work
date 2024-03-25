@@ -26,16 +26,16 @@ export default function UserCreate() {
     myHeaders.append("Content-Type", "application/json");
 
     var data = {
-      user_id: user_id,
-      name: name,
-      user_age: parseInt(user_age),
-      user_career: user_career,
-      user_address: user_address,
-      department: department,
-      program: program,
+      user_uid: user_uid,
       email: email,
       password: password,
-      user_tel: user_tel,
+      name: name,
+      age: parseInt(age),
+      career: career,
+      department_id: parseInt(department_id),
+      program: program,
+      tel: tel,
+      address: address,
     };
     
     fetch("http://localhost:4000/register", {
@@ -75,25 +75,25 @@ export default function UserCreate() {
       });
   };
 
-  const [user_id, setUser_id] = useState("");
-  const [name, setName] = useState("");
-  const [user_age, setUser_age] = useState("");
-  const [user_career, setUser_career] = useState("");
-  const [department, setDepartment] = useState("");
-  const [program, setProgram] = useState("");
-  const [user_address, setUser_address] = useState("");
+  const [user_uid, setUser_uid] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [user_tel, setUser_tel] = useState("");
+  const [name, setName] = useState("");
+  const [age, setAge] = useState("");
+  const [career, setCareer] = useState("");
+  const [department_id, setDepartment_id] = useState("");
+  const [tel, setTel] = useState("");
+  const [program, setProgram] = useState("");
+  const [address, setAddress] = useState("");
   const [values, setValues] = React.useState({
     password: '',
     showPassword: false,
   });
   const [errors, setErrors] = useState({
-    user_id: false,
+    user_uid: false,
     email: false,
     password: false,
-    user_tel: false,
+    tel: false,
   });
 
   const handleClickShowPassword = () => {
@@ -139,9 +139,9 @@ export default function UserCreate() {
   Object.values(errors).some((error) => error) || // Check if any field has errors
   email.trim() !== "" && !validateEmail(email) || 
   password.length > 0 && (password.length < 8 ) ||
-  user_id.length !== 13 ||
-  user_tel.length !== 10 ||
-  [user_id, name, user_age, user_career, department, program, user_address, email, password, user_tel].some(field => field.trim() === "");
+  user_uid.length !== 10 ||
+  tel.length !== 10 ||
+  [user_uid, email, password, name, age, career, department_id, program, tel, address].some(field => field.trim() === "");
 
 
 
@@ -203,22 +203,22 @@ export default function UserCreate() {
                   <TextField
                     variant="outlined"
                     required
-                    id="user_id"
+                    id="user_uid"
                     label="รหัสประจำตัว"
                     sx={{ width: 490 }}
-                    value={user_id}
-                    onChange={(e) => handleChange(e, setUser_id, 0, 13)}
+                    value={user_uid}
+                    onChange={(e) => handleChange(e, setUser_uid, 0, 10)}
                     inputProps={{
                       inputMode: "numeric",
                     }}
                     error={
-                      user_id.length > 0 &&
-                      (!/^\d*$/.test(user_id) || user_id.length !== 13)
+                      user_uid.length > 0 &&
+                      (!/^\d*$/.test(user_uid) || user_uid.length !== 10)
                     }
                     helperText={
-                      user_id.length > 0 &&
-                      (!/^\d*$/.test(user_id) || user_id.length !== 13)
-                        ? "กรุณากรอกรหัสประจำตัวให้ครบ 13 หลัก"
+                      user_uid.length > 0 &&
+                      (!/^\d*$/.test(user_uid) || user_uid.length !== 10)
+                        ? "กรุณากรอกรหัสประจำตัวให้ครบ 10 หลัก"
                         : ""
                     }
                   />
@@ -240,10 +240,10 @@ export default function UserCreate() {
                     sx={{ mr: 5.5 }}
                     variant="outlined"
                     required
-                    id="user_age"
+                    id="age"
                     label="อายุ"
-                    value={user_age}
-                    onChange={(e) => handleChange(e, setUser_age, 0, 3)}
+                    value={age}
+                    onChange={(e) => handleChange(e, setAge, 0, 3)}
                     inputProps={{
                       inputMode: "numeric",
                     }}
@@ -251,9 +251,9 @@ export default function UserCreate() {
                   <TextField
                     variant="outlined"
                     required
-                    id="user_career"
+                    id="career"
                     label="อาชีพ"
-                    onChange={(e) => setUser_career(e.target.value)}
+                    onChange={(e) => setCareer(e.target.value)}
                   />
                 </Grid>
 
@@ -262,9 +262,9 @@ export default function UserCreate() {
                     sx={{ mr: 5.5 }}
                     variant="outlined"
                     required
-                    id="department"
+                    id="department_id"
                     label="สาขาวิชา"
-                    onChange={(e) => setDepartment(e.target.value)}
+                    onChange={(e) => setDepartment_id(e.target.value)}
                   />
                   <TextField
                     variant="outlined"
@@ -279,10 +279,10 @@ export default function UserCreate() {
                   <TextField
                     variant="outlined"
                     required
-                    id="user_address"
+                    id="address"
                     label="ที่อยู่ที่ติดต่อได้"
                     sx={{ width: 490 }}
-                    onChange={(e) => setUser_address(e.target.value)}
+                    onChange={(e) => setAddress(e.target.value)}
                   />
                 </Grid>
 
@@ -290,7 +290,7 @@ export default function UserCreate() {
                   <TextField
                     variant="outlined"
                     required
-                    id="user_email"
+                    id="email"
                     label="Email"
                     sx={{ width: 490 }}
                     value={email}
@@ -313,7 +313,7 @@ export default function UserCreate() {
                 <TextField
                   variant="outlined"
                   required
-                  id="user_password"
+                  id="password"
                   label="รหัสผ่าน"
                   type={values.showPassword ? "text" : "password"}
                   value={password} // Use password state directly
@@ -346,21 +346,21 @@ export default function UserCreate() {
                   <TextField
                     variant="outlined"
                     required
-                    id="user_tel"
+                    id="tel"
                     label="เบอร์โทรศัพท์"
                     sx={{ width: 490 }}
-                    value={user_tel}
-                    onChange={(e) => handleChange(e, setUser_tel, 0, 10)}
+                    value={tel}
+                    onChange={(e) => handleChange(e, setTel, 0, 10)}
                     inputProps={{
                       inputMode: "numeric",
                     }}
                     error={
-                      user_tel.length > 0 &&
-                      (!/^\d*$/.test(user_tel) || user_tel.length !== 10)
+                      tel.length > 0 &&
+                      (!/^\d*$/.test(tel) || tel.length !== 10)
                     }
                     helperText={
-                      user_tel.length > 0 &&
-                      (!/^\d*$/.test(user_tel) || user_tel.length !== 10)
+                      tel.length > 0 &&
+                      (!/^\d*$/.test(tel) || tel.length !== 10)
                         ? "กรุณากรอกหมายเลขโทรศัพท์ให้ครบ 10 หลัก"
                         : ""
                     }

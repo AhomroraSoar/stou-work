@@ -163,7 +163,7 @@ export default function Page() {
 
   const handleRegisterClick = async () => {
     try {
-      const userData = JSON.parse(localStorage.getItem("user"));
+      const userData = JSON.parse(localStorage.getItem("userData"));
 
       if (!userData || !userData.user_id) {
         throw new Error("User data or user ID not found in local storage");
@@ -246,6 +246,170 @@ export default function Page() {
             activity_id: activity_id,
           };
           fetch("http://localhost:4000/deleteactivity", {
+            method: "DELETE",
+            headers: {
+              Accept: "application/form-data",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          })
+            .then((res) => res.json())
+            .then((rows) => {
+              if (rows["status"] === "ok") {
+                Swal.fire({
+                  icon: "success",
+                  title: "เสร็จสิ้น",
+                  text: rows["message"],
+                  showConfirmButton: false,
+                  timer: 1250,
+                }).then(() => {
+                  window.location.reload();
+                });
+              }
+            });
+        }
+      });
+  };
+
+  const editAdvisor = async (advisor_id) => {
+    try {
+      // Fetch advisor data
+      const advisorResponse = await fetch(
+        `http://localhost:4000/advisor/${advisor_id}`
+      );
+      const advisorData = await advisorResponse.json();
+
+      // Check if advisor data is fetched successfully
+      if (!advisorResponse.ok || advisorData.length === 0) {
+        throw new Error("Failed to fetch advisor data");
+      }
+
+      const {
+        advisor_id: fetchedAdvisorId,
+        advisor_name,
+        department,
+        advisor_tel,
+        line_contact,
+      } = advisorData[0];
+
+      // Show Swal modal with pre-filled data
+      const result = await withReactContent(Swal).fire({
+        title: <Typography>แก้ไขอาจารย์ที่ปรึกษา</Typography>,
+        html: `<input id="advisor_id" class="swal2-input" placeholder="รหัสประจำตัว" value="${fetchedAdvisorId}">
+               <input id="advisor_name" class="swal2-input" placeholder="ชื่อ-สกุล" value="${advisor_name}">
+               <input id="department" class="swal2-input" placeholder="สาชาวิชา" value="${department}">
+               <input id="advisor_tel" class="swal2-input" placeholder="เบอร์โทรศัพท์" value="${advisor_tel}">
+               <input id="line_contact" class="swal2-input" placeholder="Line ID" value="${line_contact}">
+               `,
+        confirmButtonText: "ยืนยัน",
+        cancelButtonText: "ยกเลิก",
+        showCancelButton: true,
+        allowOutsideClick: false,
+        preConfirm: () => {
+          const editedAdvisorId = document.getElementById("advisor_id").value;
+          const advisor_name = document.getElementById("advisor_name").value;
+          const department = document.getElementById("department").value;
+          const advisor_tel = document.getElementById("advisor_tel").value;
+          const line_contact = document.getElementById("line_contact").value;
+
+          if (
+            !editedAdvisorId.trim() ||
+            !advisor_name.trim() 
+          ) {
+            withReactContent(Swal).fire({
+              title: (
+                <Typography sx={{ fontSize: 20 }}>
+                  กรุณากรอกข้อมูลให้ครบถ้วน
+                </Typography>
+              ),
+              icon: "error",
+              showConfirmButton: false,
+              timer: 1200,
+            });
+            throw new Error("กรุณากรอกข้อมูลให้ครบถ้วน");
+          }
+
+          return {
+            advisor_id: editedAdvisorId,
+            advisor_name,
+            department,
+            advisor_tel,
+            line_contact,
+          };
+        },
+      });
+
+      if (result.dismiss === Swal.DismissReason.cancel) {
+        return;
+      }
+
+      // Send updated data to server
+      const response = await fetch(
+        `http://localhost:4000/advisorupdate/${advisor_id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(result.value),
+        }
+      );
+
+      const responseData = await response.json();
+
+      if (response.ok) {
+        Swal.fire({
+          title: "แก้ไขเสร็จสิ้น",
+          icon: "success",
+          showConfirmButton: false,
+          timer: 1000,
+        }).then(() => {
+          window.location.reload();
+        });
+      } else {
+        Swal.fire({
+          title: "มีบางอย่างผิดพลาดกับการแก้ไข",
+          text: responseData.message || "Failed to update advisor",
+          icon: "error",
+        });
+      }
+    } catch (error) {
+      console.error("Error updating advisor:", error);
+      Swal.fire({
+        title: "Error",
+        text: error.message || "Failed to update advisor",
+        icon: "error",
+      });
+    }
+  };
+
+  const deleteAdvisor = (advisor_id, advisor_name) => {
+    withReactContent(Swal)
+      .fire({
+        title: (
+          <Typography variant="h6">
+            ยืนยันว่าจะลบ <br /> {advisor_name} ?
+          </Typography>
+        ),
+        html: (
+          <div>
+            <span style={{ color: "red" }}>
+              หากยืนยันแล้วคุณจะไม่สามารถย้อนกลับได้!!
+            </span>
+          </div>
+        ),
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        confirmButtonText: "ลบ",
+        cancelButtonText: "ยกเลิก",
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          const data = {
+            advisor_id: advisor_id,
+          };
+          fetch("http://localhost:4000/deleteadvisor", {
             method: "DELETE",
             headers: {
               Accept: "application/form-data",
@@ -354,7 +518,7 @@ export default function Page() {
           showConfirmButton: false,
           timer: 1000,
         }).then(() => {
-          window.location.reload(); // Refresh the page upon success
+          window.location.reload();
         });
       } else {
         Swal.fire({
@@ -368,6 +532,189 @@ export default function Page() {
       Swal.fire({
         title: "Error",
         text: error.message || "Failed to add advisor",
+        icon: "error",
+      });
+    }
+  };
+
+  const deleteCommittee = (committee_id, committee_name) => {
+    withReactContent(Swal)
+      .fire({
+        title: (
+          <Typography variant="h6">
+            ยืนยันว่าจะลบ <br /> {committee_name} ?
+          </Typography>
+        ),
+        html: (
+          <div>
+            <span style={{ color: "red" }}>
+              หากยืนยันแล้วคุณจะไม่สามารถย้อนกลับได้!!
+            </span>
+          </div>
+        ),
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        confirmButtonText: "ลบ",
+        cancelButtonText: "ยกเลิก",
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          const data = {
+            committee_id: committee_id,
+          };
+          fetch("http://localhost:4000/deletecommittee", {
+            method: "DELETE",
+            headers: {
+              Accept: "application/form-data",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          })
+            .then((res) => res.json())
+            .then((rows) => {
+              if (rows["status"] === "ok") {
+                Swal.fire({
+                  icon: "success",
+                  title: "เสร็จสิ้น",
+                  text: rows["message"],
+                  showConfirmButton: false,
+                  timer: 1250,
+                }).then(() => {
+                  window.location.reload();
+                });
+              }
+            });
+        }
+      });
+  };
+
+  const editCommittee = async (committee_id) => {
+    try {
+      const committeeRoles = await fetch(
+        "http://localhost:4000/committee_role"
+      );
+      const committeeRolesData = await committeeRoles.json();
+
+      const committeeResponse = await fetch(
+        `http://localhost:4000/committee/${committee_id}`
+      );
+      const committeeData = await committeeResponse.json();
+
+      // Check if advisor data is fetched successfully
+      if (!committeeResponse.ok || committeeData.length === 0) {
+        throw new Error("Failed to fetch advisor data");
+      }
+
+      const {
+        committee_name,
+        committee_tel,
+        committee_line,
+        committee_role_id,
+        committee_role_name,
+      } = committeeData[0];
+
+      const result = await withReactContent(Swal).fire({
+        title: <Typography>แก้ไขอาจารย์ที่ปรึกษา</Typography>,
+        html: `
+               <input id="committee_name" class="swal2-input" placeholder="ชื่อ-สกุล" value="${committee_name}">
+               <input id="committee_tel" class="swal2-input" placeholder="สาชาวิชา" value="${committee_tel}">
+               <input id="committee_line" class="swal2-input" placeholder="เบอร์โทรศัพท์" value="${committee_line}">
+               <select id="committee_role_id" class="swal2-select">
+                <option value="${committeeData[0].committee_role_id[0]}" selected>${
+                      committeeData[0].committee_role_name
+                    }</option> <!-- Previous committee name -->
+                ${committeeRolesData
+                  .filter(
+                    (role) =>
+                      !committeeData[0].committee_role_id.includes(role.committee_role_id)
+                  )
+                  .map(
+                    (role) =>
+                      `<option value="${role.committee_role_id}">${role.committee_role_name}</option>`
+                  )
+                  .join("")}
+              </select>
+               `,
+        confirmButtonText: "ยืนยัน",
+        cancelButtonText: "ยกเลิก",
+        showCancelButton: true,
+        allowOutsideClick: false,
+        preConfirm: () => {
+          const committee_name =
+            document.getElementById("committee_name").value;
+          const committee_tel = document.getElementById("committee_tel").value;
+          const committee_line =
+            document.getElementById("committee_line").value;
+          const committee_role_id =
+            document.getElementById("committee_role_id").value;
+
+          if (
+            !committee_name.trim() ||
+            !committee_tel.trim() ||
+            !committee_line.trim() ||
+            !committee_role_id.trim()
+          ) {
+            withReactContent(Swal).fire({
+              title: (
+                <Typography sx={{ fontSize: 20 }}>
+                  กรุณากรอกข้อมูลให้ครบถ้วน
+                </Typography>
+              ),
+              icon: "error",
+              showConfirmButton: false,
+              timer: 1200,
+            });
+            throw new Error("กรุณากรอกข้อมูลให้ครบถ้วน");
+          }
+
+          return {
+            committee_name,
+            committee_tel,
+            committee_line,
+            committee_role_id,
+          };
+        },
+      });
+
+      if (result.dismiss === Swal.DismissReason.cancel) {
+        return;
+      }
+
+      const response = await fetch(
+        `http://localhost:4000/committeeupdate/${committee_id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(result.value),
+        }
+      );
+
+      const responseData = await response.json();
+
+      if (response.ok) {
+        Swal.fire({
+          title: "แก้ไขเสร็จสิ้น",
+          icon: "success",
+          showConfirmButton: false,
+          timer: 1000,
+        }).then(() => {
+          window.location.reload();
+        });
+      } else {
+        Swal.fire({
+          title: "มีบางอย่างผิดพลาดกับการแก้ไข",
+          text: responseData.message || "Failed to update committee",
+          icon: "error",
+        });
+      }
+    } catch (error) {
+      console.error("Error updating committee:", error);
+      Swal.fire({
+        title: "Error",
+        text: error.message || "Failed to update committee",
         icon: "error",
       });
     }
@@ -698,10 +1045,25 @@ export default function Page() {
                                   {club_advisor.advisor_name}
                                 </TableCell>
                                 <TableCell>
-                                  <Button variant="contained" sx={{ mr: 0.7 }}>
+                                  <Button
+                                    variant="contained"
+                                    sx={{ mr: 0.7 }}
+                                    onClick={() =>
+                                      editAdvisor(club_advisor.advisor_id)
+                                    }
+                                  >
                                     แก้ไข
                                   </Button>
-                                  <Button variant="contained" color="error">
+                                  <Button
+                                    variant="contained"
+                                    color="error"
+                                    onClick={() =>
+                                      deleteAdvisor(
+                                        club_advisor.advisor_id,
+                                        club_advisor.advisor_name
+                                      )
+                                    }
+                                  >
                                     ลบ
                                   </Button>
                                 </TableCell>
@@ -828,10 +1190,25 @@ export default function Page() {
                                   {club_committee.committee_role_name}
                                 </TableCell>
                                 <TableCell>
-                                  <Button variant="contained" sx={{ mr: 0.7 }}>
+                                  <Button
+                                    variant="contained"
+                                    sx={{ mr: 0.7 }}
+                                    onClick={() =>
+                                      editCommittee(club_committee.committee_id)
+                                    }
+                                  >
                                     แก้ไข
                                   </Button>
-                                  <Button variant="contained" color="error">
+                                  <Button
+                                    variant="contained"
+                                    color="error"
+                                    onClick={() =>
+                                      deleteCommittee(
+                                        club_committee.committee_id,
+                                        club_committee.committee_name
+                                      )
+                                    }
+                                  >
                                     ลบ
                                   </Button>
                                 </TableCell>
@@ -916,13 +1293,15 @@ export default function Page() {
                         key={activity.activity_id}
                       >
                         <Typography sx={{ fontSize: 20 }}>
-                          <span style={{ color: "#4341d1" }}>ชื่อกิจกรรม: </span>
+                          <span style={{ color: "#4341d1" }}>
+                            ชื่อกิจกรรม:{" "}
+                          </span>
                           <span
                             style={{
                               maxWidth: "440px",
                               wordWrap: "break-word",
                               display: "inline-block",
-                              verticalAlign: "top", 
+                              verticalAlign: "top",
                             }}
                           >
                             {activity.activity_name}

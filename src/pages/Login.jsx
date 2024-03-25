@@ -31,7 +31,7 @@ export default function SignInSide() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const jsonData = {
-      username: data.get("username"),
+      email: data.get("email"),
       password: data.get("password"),
       rememberme: false,
     };
@@ -39,7 +39,7 @@ export default function SignInSide() {
     fetch("http://localhost:4000/loginAD", {
       method: "POST",
       headers: {
-        Accept: "application/form-data",
+        Accept: "application/json",
         "Content-Type": "application/json",
       },
       body: JSON.stringify(jsonData),
@@ -77,6 +77,7 @@ export default function SignInSide() {
       })
       .catch((error) => console.log("error", error));
   };
+
 
   const [values, setValues] = React.useState({
     password: "",
@@ -162,10 +163,10 @@ export default function SignInSide() {
                   <TextField
                     margin="normal"
                     required
-                    name="username"
+                    name="email"
                     type="username"
-                    label="username"
-                    autoComplete="username"
+                    label="email"
+                    autoComplete="email"
                     variant="outlined"
                     autoFocus
                     sx={{ mb: 3, width: "100%" }}
