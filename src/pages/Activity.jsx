@@ -458,10 +458,7 @@ export default function Page() {
 
           if (
             !advisor_id.trim() ||
-            !advisor_name.trim() ||
-            !department.trim() ||
-            !advisor_tel.trim() ||
-            !line_contact.trim()
+            !advisor_name.trim()
           ) {
             withReactContent(Swal).fire({
               title: (

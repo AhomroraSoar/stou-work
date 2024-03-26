@@ -182,7 +182,7 @@ export default function Teachersearch() {
         icon: "error",
       });
     }
-  };
+  }; 
 
   return (
     <Appbar>
