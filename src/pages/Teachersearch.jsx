@@ -207,7 +207,7 @@ export default function Teachersearch() {
             alignContent: "center",
           }}
         >
-          <Paper sx={{ width: "70%", backgroundColor: "#FFF9EB" }}>
+          <Paper sx={{ width: "80%", backgroundColor: "#FFF9EB" }}>
             <Grid
               item
               xs={12}
@@ -265,23 +265,23 @@ export default function Teachersearch() {
                     sx={{ backgroundColor: "#003D98", borderBottom: 2 }}
                   >
                     <TableRow>
-                      <TableCell sx={{ textAlign: "center", color: "#ffffff" }}>
+                      <TableCell sx={{ textAlign: "center", color: "#ffffff",width:'10%' }}>
                         {" "}
                         รหัสประจำตัว
                       </TableCell>
-                      <TableCell sx={{ textAlign: "center", color: "#ffffff" }}>
+                      <TableCell sx={{ textAlign: "center", color: "#ffffff",width:'30%' }}>
                         ชื่อ - นามสกุล
                       </TableCell>
-                      <TableCell sx={{ textAlign: "center", color: "#ffffff" }}>
+                      <TableCell sx={{ textAlign: "center", color: "#ffffff",width:'10%' }}>
                         สาขาวิชา
                       </TableCell>
-                      <TableCell sx={{ textAlign: "center", color: "#ffffff" }}>
+                      <TableCell sx={{ textAlign: "center", color: "#ffffff",width:'13%' }}>
                         เบอร์โทรศัพท์
                       </TableCell>
-                      <TableCell sx={{ textAlign: "center", color: "#ffffff" }}>
+                      <TableCell sx={{ textAlign: "center", color: "#ffffff",width:'8%' }}>
                         Line ID
                       </TableCell>
-                      <TableCell sx={{ textAlign: "center", color: "#ffffff" }}>
+                      <TableCell sx={{ textAlign: "center", color: "#ffffff",width:'30%' }}>
                         {" "}
                         ที่ปรึกษา
                       </TableCell>

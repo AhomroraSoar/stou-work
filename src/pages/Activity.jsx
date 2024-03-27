@@ -1003,7 +1003,7 @@ export default function Page() {
                                 sx={{
                                   textAlign: "center",
                                   color: "#ffffff",
-                                  width: "45%",
+                                  width: "60%",
                                 }}
                               >
                                 ชื่อ - นามสกุล
@@ -1012,7 +1012,7 @@ export default function Page() {
                                 sx={{
                                   textAlign: "center",
                                   color: "#ffffff",
-                                  width: "35%",
+                                  width: "20%",
                                 }}
                               ></TableCell>
                             </TableRow>
@@ -1044,7 +1044,7 @@ export default function Page() {
                                 <TableCell>
                                   <Button
                                     variant="contained"
-                                    sx={{ mr: 0.7 }}
+                                    sx={{ m: 0.25,width:75 }}
                                     onClick={() =>
                                       editAdvisor(club_advisor.advisor_id)
                                     }
@@ -1054,6 +1054,7 @@ export default function Page() {
                                   <Button
                                     variant="contained"
                                     color="error"
+                                    sx={{m:0.25,width:75}}
                                     onClick={() =>
                                       deleteAdvisor(
                                         club_advisor.advisor_id,

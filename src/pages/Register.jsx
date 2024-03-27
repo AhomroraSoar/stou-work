@@ -27,13 +27,12 @@ export default function UserCreate() {
 
     var data = {
       user_uid: user_uid,
+      name: name,
       email: email,
       password: password,
-      name: name,
       age: parseInt(age),
-      career: career,
-      department_id: parseInt(department_id),
-      program: program,
+      curriculum_id: parseInt(curriculum_id),
+      faculty_id: parseInt(faculty_id),
       tel: tel,
       address: address,
     };
@@ -81,9 +80,9 @@ export default function UserCreate() {
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [career, setCareer] = useState("");
-  const [department_id, setDepartment_id] = useState("");
+  const [faculty_id, setFaculty_id] = useState("");
   const [tel, setTel] = useState("");
-  const [program, setProgram] = useState("");
+  const [curriculum_id, setCurriculum_id] = useState("");
   const [address, setAddress] = useState("");
   const [values, setValues] = React.useState({
     password: '',
@@ -141,7 +140,7 @@ export default function UserCreate() {
   password.length > 0 && (password.length < 8 ) ||
   user_uid.length !== 10 ||
   tel.length !== 10 ||
-  [user_uid, email, password, name, age, career, department_id, program, tel, address].some(field => field.trim() === "");
+  [user_uid, email, password, name, age, career, faculty_id, curriculum_id, tel, address].some(field => field.trim() === "");
 
 
 
@@ -262,16 +261,16 @@ export default function UserCreate() {
                     sx={{ mr: 5.5 }}
                     variant="outlined"
                     required
-                    id="department_id"
+                    id="faculty_id"
                     label="สาขาวิชา"
-                    onChange={(e) => setDepartment_id(e.target.value)}
+                    onChange={(e) => setFaculty_id(e.target.value)}
                   />
                   <TextField
                     variant="outlined"
                     required
-                    id="program"
+                    id="curriculum_id"
                     label="หลักสูตร"
-                    onChange={(e) => setProgram(e.target.value)}
+                    onChange={(e) => setCurriculum_id(e.target.value)}
                   />
                 </Grid>
 

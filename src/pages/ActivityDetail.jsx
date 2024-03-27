@@ -35,6 +35,7 @@ export default function Page() {
   const [file, setFile] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
   const [images, setImages] = useState([]);
+  const [currentDate] = useState(new Date());
 
   useEffect(() => {
     const fetchData = async () => {
@@ -353,6 +354,13 @@ export default function Page() {
     window.open(imageUrl, "_blank");
   };
 
+  const isRegistrationDisabled = () => {
+    if (data.length > 0 && formatDate(data[0].start_date) < currentDate) {
+      return true;
+    }
+    return false;
+  };
+
   const role = JSON.parse(localStorage.getItem("userData"));
 
   if (role.role_id === 3) {
@@ -422,7 +430,7 @@ export default function Page() {
                     <Typography
                       sx={{ fontSize: 20, textAlign: "center", pt: 2.25 }}
                     >
-                      รายระเอียดกิจกรรม
+                      รายละเอียดกิจกรรม
                     </Typography>
                   </Paper>
 
@@ -510,6 +518,7 @@ export default function Page() {
                     ml: 5,
                   }}
                   onClick={handleRegisterClick}
+                  disabled={isRegistrationDisabled()}
                 >
                   สมัครเข้าร่วมกิจกรรม
                 </Button>
@@ -804,7 +813,7 @@ export default function Page() {
                     <Typography
                       sx={{ fontSize: 20, textAlign: "center", pt: 2.25 }}
                     >
-                      รายระเอียดกิจกรรม
+                      รายละเอียดกิจกรรม
                     </Typography>
                   </Paper>
 
@@ -874,6 +883,7 @@ export default function Page() {
                     ml: 5,
                   }}
                   onClick={handleRegisterClick}
+                  disabled={isRegistrationDisabled()}
                 >
                   สมัครเข้าร่วมกิจกรรม
                 </Button>
@@ -980,6 +990,46 @@ export default function Page() {
                 </Paper>
               </Grid>
             </Grid>
+          </Grid>
+          <Grid container sx={{ display: "flex", justifyContent: "center" }}>
+            {images.map((image) => (
+              <Grid
+                item
+                key={image.img_id}
+                xs={4}
+                sx={{ display: "flex", justifyContent: "center" }}
+              >
+                <Card
+                  sx={{
+                    width: "100%",
+                    p: 1,
+                    m: 2,
+                    raised: true,
+                  }}
+                  style={{
+                    borderRadius: 10,
+                  }}
+                >
+                  <CardActionArea
+                    onClick={() =>
+                      handleImageClick(image.img_url.replace(/\\/g, "/"))
+                    }
+                  >
+                    <CardMedia
+                      component="img"
+                      sx={{
+                        width: "100%",
+                        height: 400,
+                        borderRadius: 2,
+                        display: "flex",
+                        justifyContent: "center",
+                      }}
+                      image={image.img_url.replace(/\\/g, "/")}
+                    />
+                  </CardActionArea>
+                </Card>
+              </Grid>
+            ))}
           </Grid>
         </Box>
       </Appbar>
