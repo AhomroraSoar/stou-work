@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
+import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
@@ -17,7 +18,7 @@ import Logo from "../assets/img/logo-th.png";
 
 import Swal from "sweetalert2";
 
-const pages = ["ค้นหารายชื่ออาจารย์ที่ปรึกษา"];
+const pages = ["ค้นหารายชื่ออาจารย์ที่ปรึกษา", "จัดการผู้ใช้"];
 
 export default function Layout({ children }) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -133,17 +134,23 @@ export default function Layout({ children }) {
               </Box>
 
               <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-                {pages.map((page) => (
-                  <Button
-                    key={page}
-                    onClick={handleCloseNavMenu}
-                    component={Link}
-                    to={"http://localhost:3000/teachersearch"}
-                    sx={{ my: 2, color: "#004D1F", display: "block" }}
-                  >
-                    {page}
-                  </Button>
-                ))}
+                {pages.map((page, index) =>
+                  page === "จัดการผู้ใช้" && userData.role_id !== 3 ? null : (
+                    <Grid key={page}>
+                      <Button
+                        component={Link}
+                        to={
+                          index === 0
+                            ? "http://localhost:3000/teachersearch"
+                            : "http://localhost:3000/manageusers"
+                        }
+                        sx={{ my: 2, color: "#004D1F", display: "block" }}
+                      >
+                        {page}
+                      </Button>
+                    </Grid>
+                  )
+                )}
               </Box>
 
               <Box sx={{ flexGrow: 0 }}>
